@@ -3,84 +3,210 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#ffffff">
 <title>SleepSense — โปรแกรมประเมินและดูแลสุขภาพการนอน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f6f7fb;--card:#ffffff;--ink:#122033;--muted:#64748b;--line:#e6e9f0;
-  --primary:#3157d5;--primary2:#5b77e8;--soft:#eef2ff;--good:#16845d;--goodbg:#eaf8f1;
-  --warn:#a86b00;--warnbg:#fff7df;--bad:#c33b54;--badbg:#fff0f3;--shadow:0 16px 44px rgba(27,42,74,.08);--radius:22px;
+  --bg:#f8fafc; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+  --primary:#3b82f6; --primary-hover:#2563eb; --soft:#eff6ff; 
+  --good:#059669; --goodbg:#d1fae5;
+  --warn:#d97706; --warnbg:#fef3c7; 
+  --bad:#e11d48; --badbg:#ffe4e6; 
+  --shadow:0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  --radius:20px;
 }
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#f8faff 0,#f6f7fb 34%,#f7f7fa 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",Arial,sans-serif;color:var(--ink)}
-button,input,select{font:inherit}button{cursor:pointer}.wrap{max-width:1180px;margin:auto;padding:0 20px}
-.topbar{position:sticky;top:0;z-index:20;background:rgba(246,247,251,.84);backdrop-filter:blur(16px);border-bottom:1px solid rgba(230,233,240,.8)}
-.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{display:flex;align-items:center;gap:11px;font-weight:850;letter-spacing:-.02em}.logo{width:38px;height:38px;border-radius:13px;background:linear-gradient(135deg,#203fae,#6c82f0);display:grid;place-items:center;color:#fff;box-shadow:0 8px 20px rgba(49,87,213,.24)}
-.nav-actions{display:flex;align-items:center;gap:8px}.iconbtn,.ghost,.primary,.danger{border:0;border-radius:12px;padding:10px 13px;background:var(--card);color:var(--ink);box-shadow:0 5px 16px rgba(25,37,62,.05)}.primary{background:var(--primary);color:#fff;font-weight:750}.ghost{background:transparent;box-shadow:none;border:1px solid var(--line)}.danger{color:var(--bad);border:1px solid #f0c4cc;background:#fff}
-.hero{padding:42px 0 24px}.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:22px;align-items:stretch}.hero-card,.score-card,.panel,.stat{background:var(--card);border:1px solid rgba(230,233,240,.9);border-radius:var(--radius);box-shadow:var(--shadow)}
-.hero-card{padding:38px}.eyebrow{font-size:13px;color:var(--primary);font-weight:800;text-transform:uppercase;letter-spacing:.12em}.hero h1{font-size:clamp(31px,5vw,60px);line-height:1.03;letter-spacing:-.045em;margin:10px 0 16px}.hero p{font-size:17px;line-height:1.7;color:var(--muted);max-width:670px}.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.mini-note{display:flex;gap:9px;align-items:flex-start;color:#536173;font-size:13px;margin-top:20px}
-.score-card{padding:28px;display:flex;flex-direction:column;justify-content:space-between;min-height:330px;background:radial-gradient(circle at 80% 20%,rgba(94,120,238,.17),transparent 35%),#fff}.score-head{display:flex;justify-content:space-between;align-items:center}.score-ring{width:190px;height:190px;margin:24px auto 15px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--primary) calc(var(--p)*1%), #e8ecf8 0);position:relative}.score-ring:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:#fff}.score-inner{position:relative;z-index:1;text-align:center}.score-num{font-size:50px;font-weight:900;line-height:.95}.score-den{color:var(--muted);font-size:12px}.score-label{text-align:center;font-weight:800}.status{display:inline-flex;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:800}.status.good{background:var(--goodbg);color:var(--good)}.status.warn{background:var(--warnbg);color:var(--warn)}.status.bad{background:var(--badbg);color:var(--bad)}
-.section{padding:18px 0 60px}.section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin:0 0 16px}.section h2{margin:0;font-size:26px;letter-spacing:-.025em}.section-sub{color:var(--muted);margin:7px 0 0}.dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:19px}.stat .k{font-size:12px;color:var(--muted)}.stat .v{font-weight:850;font-size:26px;margin-top:4px}.stat .s{font-size:12px;color:var(--muted);margin-top:3px}
-.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:2px;margin-bottom:16px}.tab{white-space:nowrap;border:1px solid var(--line);background:#fff;color:#607089;padding:10px 13px;border-radius:999px;font-weight:700}.tab.active{background:var(--soft);border-color:#cbd5ff;color:var(--primary)}
-.panel{padding:22px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stack{display:grid;gap:13px}.field{display:grid;gap:7px}.field label{font-size:13px;font-weight:800}.field small{color:var(--muted)}input,select,textarea{width:100%;border:1px solid var(--line);background:#fbfcff;border-radius:12px;padding:12px 13px;outline:none;color:var(--ink)}input:focus,select:focus,textarea:focus{border-color:#94a6f4;box-shadow:0 0 0 4px rgba(80,106,220,.1)}.range-line{display:flex;gap:10px;align-items:center}.range-line input{padding:0}.range-value{min-width:48px;text-align:right;font-weight:850}
-.callout{border-radius:16px;padding:14px 15px;border:1px solid var(--line);background:#fafbff}.callout strong{display:block;margin-bottom:3px}.callout p{margin:0;color:#59667a;font-size:13px;line-height:1.55}.callout.good{background:var(--goodbg);border-color:#c6eadb}.callout.warn{background:var(--warnbg);border-color:#f0dfae}.callout.bad{background:var(--badbg);border-color:#f1c9d1}
-.check{display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fbfcff}.check input{width:auto;margin-top:3px}.check span{font-size:13px;line-height:1.45}
-.result-hero{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:center}.meter{height:12px;background:#edf0f7;border-radius:999px;overflow:hidden}.meter>div{height:100%;border-radius:999px;background:linear-gradient(90deg,#5e78ee,#3157d5);width:0}.results{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}.result-box{padding:16px;border:1px solid var(--line);border-radius:16px;background:#fbfcff}.result-box b{display:block;font-size:13px;margin-bottom:6px}.result-box .big{font-size:23px;font-weight:850}.result-box p{font-size:12px;color:var(--muted);margin:5px 0 0}
-.advice{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:15px}.advice-card{padding:17px;border-radius:17px;background:linear-gradient(180deg,#fff,#fbfcff);border:1px solid var(--line)}.advice-card .tag{font-size:11px;font-weight:850;color:var(--primary);margin-bottom:8px}.advice-card h3{margin:0 0 7px;font-size:16px}.advice-card p{margin:0;color:#5f6d80;font-size:13px;line-height:1.55}.advice-card .why{margin-top:9px;font-size:11px;color:#8792a2}
-.diary-row{display:grid;grid-template-columns:1.1fr repeat(5,.8fr) auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.diary-row:last-child{border-bottom:0}.diary-head{font-size:11px;color:var(--muted);font-weight:800}.diary-row input,.diary-row select{padding:9px 8px;border-radius:10px;font-size:12px}.table-scroll{overflow:auto}.empty{text-align:center;padding:34px;color:var(--muted)}
-.chart{height:240px;padding-top:8px}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.insight-list{display:grid;gap:10px}.insight{display:flex;gap:10px;align-items:flex-start;padding:13px;border:1px solid var(--line);border-radius:14px;background:#fcfdff}.insight .num{width:25px;height:25px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-weight:850;color:var(--primary);flex:none}.insight p{margin:0;font-size:13px;line-height:1.55}
-footer{padding:35px 0 70px;color:#758195;font-size:12px}.sources a{color:var(--primary);text-decoration:none}.sources a:hover{text-decoration:underline}.modal{position:fixed;inset:0;background:rgba(18,32,51,.38);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.open{display:flex}.modal-card{max-width:650px;width:100%;max-height:90vh;overflow:auto;background:#fff;border-radius:22px;padding:24px;box-shadow:0 28px 80px rgba(14,27,49,.2)}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.dashboard{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.result-hero{grid-template-columns:1fr}.advice{grid-template-columns:1fr}}
-@media(max-width:620px){.wrap{padding:0 14px}.hero-card,.score-card,.panel{padding:18px}.dashboard{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.nav{height:62px}.nav-actions .ghost span{display:none}.diary-row{grid-template-columns:100px repeat(5,76px) 34px}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background-color:var(--bg);
+  font-family:'Inter', 'Noto Sans Thai', sans-serif;
+  color:var(--ink);
+  line-height:1.5;
+  overflow-x:hidden;
+}
 
-/* === SleepSense Aurora 3D UI upgrade === */
-body{background:#050817;overflow-x:hidden}
-#aurora3d{position:fixed;inset:0;width:100%;height:100%;z-index:-3;pointer-events:none}
-body:before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 50% -10%,rgba(103,88,255,.28),transparent 38%),radial-gradient(circle at 10% 80%,rgba(0,210,255,.13),transparent 32%);mix-blend-mode:screen}
-.topbar{background:rgba(5,8,23,.62);border-bottom:1px solid rgba(255,255,255,.09);backdrop-filter:blur(22px)}
-.brand{color:#f7f8ff}.logo{box-shadow:0 0 30px rgba(107,117,255,.5)}
-.hero-card,.score-card,.panel,.stat{background:linear-gradient(145deg,rgba(18,24,50,.78),rgba(9,14,31,.78));border:1px solid rgba(255,255,255,.1);box-shadow:0 25px 80px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.05);color:#f5f7ff;backdrop-filter:blur(18px);transform-style:preserve-3d;transition:transform .18s ease,box-shadow .3s ease,border-color .3s ease}
-.hero-card:hover,.score-card:hover,.panel:hover,.stat:hover{border-color:rgba(139,150,255,.32);box-shadow:0 30px 90px rgba(0,0,0,.4),0 0 35px rgba(91,105,255,.08),inset 0 1px 0 rgba(255,255,255,.07)}
-.hero h1{color:#fff;text-shadow:0 0 45px rgba(121,130,255,.22)}
-.hero p,.section-sub,.mini-note,.stat .k,.stat .s,.advice-card p,.advice-card .why,.callout p,.result-box p,.insight p{color:#aab4d0}
-.section h2,.field label,.advice-card h3,.result-box b{color:#f4f6ff}
-.primary{background:linear-gradient(135deg,#6675ff,#8c6cff);box-shadow:0 10px 28px rgba(99,100,255,.28);transition:.2s}.primary:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(99,100,255,.42)}
-.ghost,.iconbtn{background:rgba(255,255,255,.04);color:#dce2f5;border-color:rgba(255,255,255,.1)}
-input,select,textarea{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.1);color:#edf1ff}.field small{color:#8793b1}
-input:focus,select:focus,textarea:focus{border-color:#8795ff;box-shadow:0 0 0 4px rgba(104,117,255,.13)}
-.score-card{background:radial-gradient(circle at 80% 20%,rgba(116,105,255,.22),transparent 36%),linear-gradient(145deg,rgba(18,24,50,.82),rgba(9,14,31,.82))}.score-ring:after{background:#10162d}.score-den{color:#8e9ab9}.status.good{background:rgba(50,211,153,.13);color:#67e6b6}.status.warn{background:rgba(255,193,73,.13);color:#ffd36f}.status.bad{background:rgba(255,91,120,.13);color:#ff8ca3}
-.callout,.result-box,.advice-card,.check,.insight{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.09)}
-.tab{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.09);color:#9da8c4}.tab.active{background:rgba(112,124,255,.16);border-color:rgba(130,142,255,.35);color:#aeb7ff}
-.meter{background:rgba(255,255,255,.08)}
-.ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,.35);animation:ripple .6s ease-out;pointer-events:none}.ripple-host{position:relative;overflow:hidden}@keyframes ripple{to{transform:scale(4);opacity:0}}
-.toast{position:fixed;right:22px;bottom:22px;z-index:100;padding:12px 16px;border-radius:14px;background:rgba(17,24,49,.88);border:1px solid rgba(255,255,255,.12);color:#eef2ff;box-shadow:0 18px 50px rgba(0,0,0,.35);backdrop-filter:blur(18px);transform:translateY(20px);opacity:0;transition:.3s;pointer-events:none}.toast.show{transform:translateY(0);opacity:1}
-@media(max-width:700px){.hero-card,.score-card,.panel{backdrop-filter:blur(12px)}.toast{left:16px;right:16px;bottom:16px}}
-/* === Select contrast/accessibility fix === */
-select{
-  color:#f7f9ff !important;
-  background-color:#151c35 !important;
-  background-image:linear-gradient(45deg,transparent 50%,#aeb9ff 50%),linear-gradient(135deg,#aeb9ff 50%,transparent 50%);
-  background-position:calc(100% - 18px) 52%,calc(100% - 13px) 52%;
-  background-size:5px 5px,5px 5px;
-  background-repeat:no-repeat;
-  padding-right:38px !important;
-  color-scheme:dark;
-  border-color:rgba(150,162,255,.22) !important;
+/* Moving Starfield Background Canvas */
+#bg-canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  z-index:-1;
+  pointer-events:none;
 }
-select:hover{background-color:#1b2443 !important;border-color:rgba(150,162,255,.4) !important}
-select:focus{background-color:#18203d !important;border-color:#8795ff !important}
-select option,select optgroup{
-  background:#11182f !important;
-  color:#f4f7ff !important;
+
+button,input,select,textarea{font:inherit}
+/* UI Movement Slowed Down & Calmed */
+button{cursor:pointer; transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;}
+button:active{transform:scale(0.99)!important}
+.wrap{max-width:1180px; margin:auto; padding:0 20px}
+
+/* Navbar */
+.topbar{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--line)}
+.nav{height:72px; display:flex; align-items:center; justify-content:space-between; gap:14px}
+.brand{display:flex; align-items:center; gap:11px; font-weight:800; font-size:1.1rem; letter-spacing:-.02em}
+.logo{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, var(--primary), #60a5fa); display:grid; place-items:center; color:#fff; box-shadow:0 4px 12px rgba(59, 130, 246, 0.3)}
+
+/* Buttons (No hover transforms) */
+.nav-actions{display:flex; align-items:center; gap:12px}
+.iconbtn, .ghost, .primary, .danger{border:0; border-radius:12px; padding:10px 16px; font-weight:600;}
+.primary{background:var(--primary); color:#fff; box-shadow:0 4px 12px rgba(59, 130, 246, 0.2)}
+.primary:hover{background:var(--primary-hover)}
+.ghost{background:rgba(255,255,255,0.8); border:1px solid var(--line); color:var(--ink)}
+.ghost:hover{background:#f1f5f9}
+.danger{color:var(--bad); border:1px solid #fda4af; background:#fff}
+.danger:hover{background:var(--badbg)}
+
+/* Still Cards & Layout */
+.hero{padding:50px 0 30px}
+.hero-grid{display:grid; grid-template-columns:1.2fr 0.8fr; gap:24px; align-items:stretch}
+.hero-card, .score-card, .panel, .stat{
+  background:rgba(255, 255, 255, 0.9);
+  backdrop-filter:blur(8px);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
 }
-select option:checked,select option:hover{background:#4f5ed0 !important;color:#fff !important}
-.diary-row select{background-color:#151c35 !important;color:#f7f9ff !important}
+.hero-card{padding:40px}
+.eyebrow{font-size:13px; color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:0.1em}
+.hero h1{font-size:clamp(32px, 4vw, 56px); font-weight:800; line-height:1.1; letter-spacing:-.03em; margin:12px 0 20px}
+.hero p{font-size:17px; line-height:1.7; color:var(--muted); max-width:600px}
+.hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:30px}
+.mini-note{display:flex; gap:8px; align-items:flex-start; color:var(--muted); font-size:13px; margin-top:24px}
+
+/* Score Card */
+.score-card{padding:32px; display:flex; flex-direction:column; justify-content:space-between; min-height:330px; background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95))}
+.score-head{display:flex; justify-content:space-between; align-items:center}
+.score-ring{width:190px; height:190px; margin:24px auto 15px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--primary) calc(var(--p)*1%), #e2e8f0 0); position:relative}
+.score-ring:after{content:""; position:absolute; width:154px; height:154px; border-radius:50%; background:#fff}
+.score-inner{position:relative; z-index:1; text-align:center}
+.score-num{font-size:56px; font-weight:800; line-height:1; color:var(--ink)}
+.score-den{color:var(--muted); font-size:14px; font-weight:500; margin-top:4px}
+.score-label{text-align:center; font-weight:700; color:var(--ink)}
+.status{display:inline-flex; padding:6px 12px; border-radius:999px; font-size:13px; font-weight:700}
+.status.good{background:var(--goodbg); color:var(--good)}
+.status.warn{background:var(--warnbg); color:var(--warn)}
+.status.bad{background:var(--badbg); color:var(--bad)}
+
+/* Sections */
+.section{padding:24px 0 60px}
+.section-head{display:flex; justify-content:space-between; gap:20px; align-items:flex-end; margin:0 0 20px}
+.section h2{margin:0; font-size:24px; font-weight:800; letter-spacing:-.02em}
+.section-sub{color:var(--muted); margin:8px 0 0; font-size:15px}
+.dashboard{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+.stat{padding:24px}
+.stat .k{font-size:13px; font-weight:600; color:var(--muted)}
+.stat .v{font-weight:800; font-size:28px; margin-top:8px; color:var(--ink)}
+.stat .s{font-size:13px; color:var(--muted); margin-top:4px}
+
+/* Tabs & Forms */
+.tabs{display:flex; gap:8px; overflow:auto; padding-bottom:8px; margin-bottom:20px}
+.tab{white-space:nowrap; border:1px solid var(--line); background:#fff; color:var(--muted); padding:10px 16px; border-radius:999px; font-weight:600}
+.tab.active{background:var(--soft); border-color:var(--primary); color:var(--primary)}
+.panel{padding:32px}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:24px}
+.grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:20px}
+.stack{display:grid; gap:16px}
+.field{display:grid; gap:8px}
+.field label{font-size:14px; font-weight:600; color:var(--ink)}
+input, select, textarea{width:100%; border:1px solid var(--line); background:#f8fafc; border-radius:12px; padding:12px 16px; outline:none; color:var(--ink); transition:border-color 0.3s, box-shadow 0.3s}
+input:focus, select:focus{border-color:var(--primary); box-shadow:0 0 0 4px rgba(59,130,246,.15); background:#fff}
+.range-line{display:flex; gap:16px; align-items:center}
+.range-value{min-width:48px; text-align:right; font-weight:700; color:var(--primary)}
+
+/* Callouts & Results */
+.callout{border-radius:16px; padding:16px 20px; border:1px solid var(--line); background:#f8fafc}
+.callout strong{display:block; margin-bottom:6px; color:var(--ink)}
+.callout p{margin:0; color:var(--muted); font-size:14px; line-height:1.6}
+.callout.good{background:var(--goodbg); border-color:#a7f3d0}
+.callout.warn{background:var(--warnbg); border-color:#fde68a}
+.callout.bad{background:var(--badbg); border-color:#fecdd3}
+
+.check{display:flex; align-items:flex-start; gap:12px; padding:16px; border:1px solid var(--line); border-radius:12px; background:#f8fafc; cursor:pointer}
+.check:hover{background:#f1f5f9}
+.check input{width:18px; height:18px; margin-top:2px; accent-color:var(--primary)}
+.check span{font-size:14px; line-height:1.5}
+
+.result-hero{display:grid; grid-template-columns:200px 1fr; gap:32px; align-items:center}
+.meter{height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:16px}
+.meter>div{height:100%; border-radius:999px; background:linear-gradient(90deg, #60a5fa, var(--primary)); width:0; transition:width 1.5s cubic-bezier(0.16, 1, 0.3, 1)}
+.results{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px}
+.result-box{padding:20px; border:1px solid var(--line); border-radius:16px; background:#f8fafc}
+.result-box b{display:block; font-size:14px; margin-bottom:8px; color:var(--ink)}
+.result-box .big{font-size:26px; font-weight:800; color:var(--primary)}
+.result-box p{font-size:13px; color:var(--muted); margin:8px 0 0}
+
+.advice{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:24px}
+.advice-card{padding:20px; border-radius:16px; background:#fff; border:1px solid var(--line); box-shadow:0 4px 6px -1px rgba(0,0,0,0.02)}
+.advice-card .tag{font-size:12px; font-weight:700; color:var(--primary); margin-bottom:10px; display:inline-block; padding:4px 10px; background:var(--soft); border-radius:6px}
+.advice-card h3{margin:0 0 8px; font-size:16px; font-weight:700}
+.advice-card p{margin:0; color:var(--muted); font-size:14px; line-height:1.6}
+
+/* Diary Table & Charts */
+.diary-row{display:grid; grid-template-columns:1.2fr repeat(5,1fr) 40px; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line)}
+.diary-row:last-child{border-bottom:0}
+.diary-head{font-size:13px; color:var(--muted); font-weight:600; padding-bottom:8px}
+.diary-row input, .diary-row select{padding:10px 12px; border-radius:10px; font-size:14px; font-weight:500}
+.table-scroll{overflow-x:auto}
+.empty{text-align:center; padding:48px 20px; color:var(--muted); background:#f8fafc; border-radius:12px; border:1px dashed #cbd5e1}
+
+.chart{height:240px; padding-top:16px; width:100%}
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin-top:12px; font-weight:500}
+.dot{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px}
+.insight-list{display:grid; gap:12px}
+.insight{display:flex; gap:12px; align-items:flex-start; padding:16px; border:1px solid var(--line); border-radius:14px; background:#fff}
+.insight .num{width:28px; height:28px; border-radius:50%; background:var(--soft); display:grid; place-items:center; font-weight:700; color:var(--primary); flex:none; font-size:14px}
+.insight p{margin:0; font-size:14px; line-height:1.6; color:var(--ink)}
+
+/* Footer & Modal */
+footer{padding:40px 0 80px; color:var(--muted); font-size:13px; line-height:1.6}
+.sources a{color:var(--primary); text-decoration:none; font-weight:500}
+.sources a:hover{text-decoration:underline}
+.modal{position:fixed; inset:0; background:rgba(15, 23, 42, 0.6); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; padding:20px; z-index:50}
+.modal.open{display:flex}
+.modal-card{max-width:600px; width:100%; max-height:90vh; overflow:auto; background:#fff; border-radius:24px; padding:32px; box-shadow:0 25px 50px -12px rgba(0, 0, 0, 0.25)}
+
+/* Toast (Slowed transition) */
+.toast{position:fixed; bottom:30px; right:30px; background:var(--ink); color:#fff; padding:14px 24px; border-radius:12px; font-weight:500; font-size:14px; box-shadow:0 10px 25px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.5s cubic-bezier(0.16, 1, 0.3, 1); z-index:100}
+.toast.show{transform:translateY(0); opacity:1}
+
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr}
+  .dashboard{grid-template-columns:repeat(2,1fr)}
+  .grid3{grid-template-columns:1fr}
+  .result-hero{grid-template-columns:1fr}
+  .advice{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .wrap{padding:0 16px}
+  .hero-card, .score-card, .panel{padding:24px}
+  .dashboard{grid-template-columns:1fr 1fr}
+  .grid2{grid-template-columns:1fr}
+  .nav{height:64px}
+  .nav-actions .ghost span{display:none}
+  .diary-row{grid-template-columns:110px repeat(5,90px) 40px}
+}
 </style>
 </head>
-<body><canvas id="aurora3d"></canvas><div id="toast" class="toast">บันทึกแล้ว ✦</div>
-<div class="topbar"><div class="wrap nav">
-  <div class="brand"><div class="logo">☾</div><div>SleepSense</div></div>
-  <div class="nav-actions"><button class="ghost" id="infoBtn">ⓘ <span>เกี่ยวกับโปรแกรม</span></button><button class="primary" id="quickDiaryBtn">+ บันทึกวันนี้</button></div>
-</div></div>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="toast" class="toast">บันทึกแล้ว ✦</div>
+
+<div class="topbar">
+  <div class="wrap nav">
+    <div class="brand"><div class="logo">☾</div><div>SleepSense</div></div>
+    <div class="nav-actions">
+      <button class="ghost" id="infoBtn">ⓘ <span>เกี่ยวกับโปรแกรม</span></button>
+      <button class="primary" id="quickDiaryBtn">+ บันทึกวันนี้</button>
+    </div>
+  </div>
+</div>
 
 <main class="wrap">
 <section class="hero">
@@ -89,19 +215,35 @@ select option:checked,select option:hover{background:#4f5ed0 !important;color:#f
    <div class="eyebrow">Sleep health dashboard</div>
    <h1>รู้จักการนอนของคุณ<br>แล้วค่อย ๆ ทำให้ดีขึ้น</h1>
    <p>โปรแกรมประเมินสุขภาพการนอนจากพฤติกรรมและ sleep diary เพื่อช่วยมองเห็น “ระยะเวลา • คุณภาพ • ความสม่ำเสมอ • ผลกระทบตอนกลางวัน” พร้อมแผนปรับพฤติกรรมที่ทำได้จริง</p>
-   <div class="hero-cta"><button class="primary" id="startBtn">เริ่มประเมินการนอน</button><button class="ghost" id="scrollDiary">ดู Sleep Diary</button></div>
-   <div class="mini-note">🔒 ข้อมูลหลักเก็บในเบราว์เซอร์ของเครื่องนี้ผ่าน localStorage และไม่มีระบบส่งข้อมูลขึ้นเซิร์ฟเวอร์ในเวอร์ชันนี้</div>
+   <div class="hero-cta">
+     <button class="primary" id="startBtn">เริ่มประเมินการนอน</button>
+     <button class="ghost" id="scrollDiary">ดู Sleep Diary</button>
+   </div>
+   <div class="mini-note">🔒 ข้อมูลเก็บในเบราว์เซอร์ของเครื่องนี้ และไม่มีระบบส่งข้อมูลขึ้นเซิร์ฟเวอร์</div>
   </div>
   <div class="score-card">
-   <div class="score-head"><div><div class="eyebrow">Wellness score</div><div style="color:var(--muted);font-size:13px;margin-top:3px">ปรับตามข้อมูลล่าสุด</div></div><span class="status warn" id="scoreStatus">ยังไม่มีข้อมูล</span></div>
-   <div class="score-ring" id="scoreRing" style="--p:0"><div class="score-inner"><div class="score-num" id="scoreNum">—</div><div class="score-den">/ 100</div></div></div>
+   <div class="score-head">
+     <div>
+       <div class="eyebrow">Wellness score</div>
+       <div style="color:var(--muted);font-size:13px;margin-top:4px">ปรับตามข้อมูลล่าสุด</div>
+     </div>
+     <span class="status warn" id="scoreStatus">ยังไม่มีข้อมูล</span>
+   </div>
+   <div class="score-ring" id="scoreRing" style="--p:0">
+     <div class="score-inner">
+       <div class="score-num" id="scoreNum">—</div>
+       <div class="score-den">/ 100</div>
+     </div>
+   </div>
    <div class="score-label" id="scoreLabel">ทำแบบประเมินเพื่อดูคะแนน</div>
   </div>
  </div>
 </section>
 
 <section class="section" id="dashboard">
- <div class="section-head"><div><h2>ภาพรวม</h2><p class="section-sub">ตัวชี้วัดที่สำคัญจากข้อมูลของคุณ</p></div></div>
+ <div class="section-head">
+   <div><h2>ภาพรวม</h2><p class="section-sub">ตัวชี้วัดที่สำคัญจากข้อมูลของคุณ</p></div>
+ </div>
  <div class="dashboard">
   <div class="stat"><div class="k">เวลานอนเฉลี่ย</div><div class="v" id="avgSleep">—</div><div class="s">ชั่วโมง/คืน</div></div>
   <div class="stat"><div class="k">Sleep efficiency</div><div class="v" id="efficiency">—</div><div class="s">เวลาหลับ ÷ เวลาบนเตียง</div></div>
@@ -111,102 +253,284 @@ select option:checked,select option:hover{background:#4f5ed0 !important;color:#f
 </section>
 
 <section class="section" id="assessment">
- <div class="section-head"><div><h2>1. ประเมินสุขภาพการนอน</h2><p class="section-sub">ตอบตาม “ช่วง 2 สัปดาห์ที่ผ่านมา” เพื่อให้คะแนนสะท้อนภาพรวมมากขึ้น</p></div></div>
+ <div class="section-head">
+   <div><h2>1. ประเมินสุขภาพการนอน</h2><p class="section-sub">ตอบตาม “ช่วง 2 สัปดาห์ที่ผ่านมา” เพื่อให้คะแนนสะท้อนภาพรวมมากขึ้น</p></div>
+ </div>
  <div class="panel">
-  <div class="tabs"><button class="tab active" data-tab="basic">พื้นฐาน</button><button class="tab" data-tab="quality">คุณภาพ</button><button class="tab" data-tab="habits">พฤติกรรม</button><button class="tab" data-tab="redflags">สัญญาณเตือน</button></div>
+  <div class="tabs">
+    <button class="tab active" data-tab="basic">พื้นฐาน</button>
+    <button class="tab" data-tab="quality">คุณภาพ</button>
+    <button class="tab" data-tab="habits">พฤติกรรม</button>
+    <button class="tab" data-tab="redflags">สัญญาณเตือน</button>
+  </div>
+  
   <div id="tab-basic" class="tabbody">
    <div class="grid2">
-    <div class="field"><label>อายุ</label><input id="age" type="number" min="5" max="100" placeholder="เช่น 17"></div>
+    <div class="field"><label>อายุ</label><input id="age" type="number" min="5" max="100" placeholder="เช่น 25"></div>
     <div class="field"><label>เวลาที่ต้องตื่นโดยทั่วไป</label><input id="wakeTarget" type="time" value="06:00"></div>
     <div class="field"><label>เวลาเข้านอนโดยทั่วไป</label><input id="bedTarget" type="time" value="22:30"></div>
     <div class="field"><label>งีบตอนกลางวันโดยเฉลี่ย</label><select id="nap"><option value="0">แทบไม่มี</option><option value="1">น้อยกว่า 30 นาที</option><option value="2">30–60 นาที</option><option value="3">มากกว่า 60 นาที</option></select></div>
    </div>
-   <div class="callout" style="margin-top:15px"><strong>เกณฑ์เวลาเป้าหมายจะปรับตามอายุ</strong><p>วัยรุ่น 13–17 ปี: โดยทั่วไปแนะนำ 8–10 ชั่วโมง/24 ชั่วโมง ส่วนผู้ใหญ่ 18–60 ปี: อย่างน้อย 7 ชั่วโมงเป็นประจำ หากยังไม่มีอายุ โปรแกรมจะไม่ตัดสินจากชั่วโมงนอน</p></div>
+   <div class="callout" style="margin-top:24px"><strong>เกณฑ์เวลาเป้าหมายจะปรับตามอายุ</strong><p>วัยรุ่น 13–17 ปี: แนะนำ 8–10 ชั่วโมง | ผู้ใหญ่ 18–60 ปี: อย่างน้อย 7 ชั่วโมงเป็นประจำ</p></div>
   </div>
+
   <div id="tab-quality" class="tabbody" style="display:none">
    <div class="stack">
     <div class="field"><label>ใช้เวลานานแค่ไหนกว่าจะหลับ?</label><select id="latency"><option value="0">น้อยกว่า 15 นาที</option><option value="1">15–30 นาที</option><option value="2">31–60 นาที</option><option value="3">มากกว่า 60 นาที</option></select></div>
     <div class="field"><label>ตื่นกลางคืนบ่อยแค่ไหน?</label><select id="awaken"><option value="0">แทบไม่ตื่น</option><option value="1">บางคืน</option><option value="2">หลายคืนต่อสัปดาห์</option><option value="3">เกือบทุกคืน</option></select></div>
     <div class="field"><label>ตื่นแล้วรู้สึกสดชื่นเพียงใด?</label><div class="range-line"><input id="refresh" type="range" min="0" max="10" value="6"><div class="range-value" id="refreshVal">6/10</div></div></div>
     <div class="field"><label>ง่วงระหว่างวันเพียงใด?</label><div class="range-line"><input id="daySleepy" type="range" min="0" max="10" value="4"><div class="range-value" id="daySleepyVal">4/10</div></div></div>
-    <div class="field"><label>คุณภาพการนอนโดยรวมที่คุณประเมินเอง</label><select id="quality"><option value="3">แย่มาก</option><option value="2">ค่อนข้างแย่</option><option value="1">พอใช้</option><option value="0">ดี</option></select></div>
+    <div class="field"><label>คุณภาพการนอนโดยรวม</label><select id="quality"><option value="3">แย่มาก</option><option value="2">ค่อนข้างแย่</option><option value="1">พอใช้</option><option value="0">ดี</option></select></div>
    </div>
   </div>
+
   <div id="tab-habits" class="tabbody" style="display:none">
    <div class="grid2">
     <div class="field"><label>คาเฟอีนช่วงบ่าย/เย็น</label><select id="caffeine"><option value="0">แทบไม่ดื่ม</option><option value="1">บางวัน</option><option value="2">เกือบทุกวัน</option><option value="3">ทุกวัน/หลายครั้ง</option></select></div>
-    <div class="field"><label>หน้าจอ/อุปกรณ์ก่อนนอน</label><select id="screen"><option value="0">หยุดก่อนนอน ≥ 60 นาที</option><option value="1">30–60 นาที</option><option value="2">15–30 นาที</option><option value="3">แทบจนถึงเวลาหลับ</option></select></div>
-    <div class="field"><label>เวลาเข้านอน/ตื่นแกว่งจากวันธรรมดาไปวันหยุด</label><select id="schedule"><option value="0">น้อยกว่า 30 นาที</option><option value="1">30–60 นาที</option><option value="2">1–2 ชั่วโมง</option><option value="3">มากกว่า 2 ชั่วโมง</option></select></div>
-    <div class="field"><label>กิจกรรมทางกายช่วงกลางวัน</label><select id="exercise"><option value="0">สม่ำเสมอ</option><option value="1">ค่อนข้างสม่ำเสมอ</option><option value="2">น้อย</option><option value="3">แทบไม่มี</option></select></div>
-    <div class="field"><label>ห้องนอนเอื้อต่อการนอนหรือไม่</label><select id="environment"><option value="0">มืด เงียบ อุณหภูมิสบาย</option><option value="1">มีรบกวนเล็กน้อย</option><option value="2">รบกวนพอสมควร</option><option value="3">รบกวนมาก</option></select></div>
-    <div class="field"><label>ความเครียด/ความคิดวนก่อนนอน</label><select id="stress"><option value="0">น้อย</option><option value="1">เล็กน้อย</option><option value="2">ปานกลาง</option><option value="3">มาก</option></select></div>
+    <div class="field"><label>หน้าจอก่อนนอน</label><select id="screen"><option value="0">หยุดก่อนนอน ≥ 60 นาที</option><option value="1">30–60 นาที</option><option value="2">15–30 นาที</option><option value="3">แทบจนถึงเวลาหลับ</option></select></div>
+    <div class="field"><label>เวลาตื่นแกว่ง (วันธรรมดา vs วันหยุด)</label><select id="schedule"><option value="0">น้อยกว่า 30 นาที</option><option value="1">30–60 นาที</option><option value="2">1–2 ชั่วโมง</option><option value="3">มากกว่า 2 ชั่วโมง</option></select></div>
+    <div class="field"><label>กิจกรรมทางกาย</label><select id="exercise"><option value="0">สม่ำเสมอ</option><option value="1">ค่อนข้างสม่ำเสมอ</option><option value="2">น้อย</option><option value="3">แทบไม่มี</option></select></div>
+    <div class="field"><label>สภาพห้องนอน</label><select id="environment"><option value="0">มืด เงียบ สบาย</option><option value="1">รบกวนเล็กน้อย</option><option value="2">รบกวนพอสมควร</option><option value="3">รบกวนมาก</option></select></div>
+    <div class="field"><label>ความเครียดก่อนนอน</label><select id="stress"><option value="0">น้อย</option><option value="1">เล็กน้อย</option><option value="2">ปานกลาง</option><option value="3">มาก</option></select></div>
    </div>
   </div>
+
   <div id="tab-redflags" class="tabbody" style="display:none">
    <div class="stack">
     <label class="check"><input id="snore" type="checkbox"><span><b>กรนดังบ่อย</b><br>โดยเฉพาะถ้ามีคนรอบตัวสังเกตเห็น</span></label>
-    <label class="check"><input id="gasp" type="checkbox"><span><b>สะดุ้ง/หอบ/เหมือนขาดอากาศขณะหลับ</b><br>หรือมีคนบอกว่าหยุดหายใจเป็นช่วง ๆ</span></label>
-    <label class="check"><input id="dangerSleepy" type="checkbox"><span><b>ง่วงมากจนรบกวนการเรียน/งาน/การเดินทาง</b><br>เช่น เผลอหลับระหว่างกิจกรรมที่ต้องตื่นตัว</span></label>
-    <label class="check"><input id="persistent" type="checkbox"><span><b>ปัญหาการนอนเป็นต่อเนื่องและกระทบชีวิตประจำวัน</b><br>โปรแกรมจะแนะนำให้คุยกับผู้ให้บริการสุขภาพแทนการสรุปสาเหตุเอง</span></label>
-    <div class="callout warn"><strong>สำคัญ</strong><p>สัญญาณเหล่านี้ไม่ใช่การวินิจฉัยโรค แต่เป็นเหตุผลที่ควรขอคำประเมินจากแพทย์/คลินิกการนอน โดยเฉพาะอาการกรนร่วมกับสะดุ้งหอบหรือสงสัยหยุดหายใจ</p></div>
+    <label class="check"><input id="gasp" type="checkbox"><span><b>สะดุ้งหอบ/เหมือนขาดอากาศขณะหลับ</b><br>หรือมีคนบอกว่าหยุดหายใจเป็นช่วง ๆ</span></label>
+    <label class="check"><input id="dangerSleepy" type="checkbox"><span><b>ง่วงมากจนรบกวนการใช้ชีวิต</b><br>เช่น เผลอหลับระหว่างทำงานหรือขับรถ</span></label>
+    <label class="check"><input id="persistent" type="checkbox"><span><b>ปัญหาการนอนต่อเนื่องและกระทบชีวิต</b><br>แนะนำให้ปรึกษาแพทย์แทนการแก้ด้วยตัวเอง</span></label>
    </div>
   </div>
-  <div style="display:flex;justify-content:flex-end;gap:9px;margin-top:18px"><button class="primary" id="assessBtn">ประมวลผลการประเมิน</button></div>
+
+  <div style="display:flex; justify-content:flex-end; margin-top:32px">
+    <button class="primary" id="assessBtn">ประมวลผลการประเมิน</button>
+  </div>
  </div>
 </section>
 
 <section class="section" id="results">
- <div class="section-head"><div><h2>2. ผลประเมินและแผนแก้ไข</h2><p class="section-sub">คำแนะนำจะเรียงตาม “ปัจจัยที่มีโอกาสได้ประโยชน์จากการแก้มากที่สุด”</p></div></div>
+ <div class="section-head">
+   <div><h2>2. ผลประเมินและแผนแก้ไข</h2><p class="section-sub">คำแนะนำปรับแต่งตามปัจจัยของคุณ</p></div>
+ </div>
  <div class="panel">
-   <div class="result-hero"><div><div class="score-ring" id="scoreRing2" style="--p:0;width:180px;height:180px"><div class="score-inner"><div class="score-num" id="scoreNum2">—</div><div class="score-den">/ 100</div></div></div></div><div><div id="resultHeadline" style="font-size:22px;font-weight:900">ยังไม่มีผลประเมิน</div><p id="resultSummary" style="color:var(--muted);line-height:1.65">กรอกแบบประเมินด้านบน แล้วระบบจะสรุปคะแนนย่อยและคำแนะนำ</p><div class="meter"><div id="meterBar"></div></div></div></div>
-   <div class="results">
-    <div class="result-box"><b>ระยะเวลา</b><div class="big" id="durationScore">—</div><p>ความเพียงพอเมื่อเทียบกับช่วงอายุ</p></div>
-    <div class="result-box"><b>คุณภาพ</b><div class="big" id="qualityScore">—</div><p>ความสดชื่นและการตื่นกลางคืน</p></div>
-    <div class="result-box"><b>พฤติกรรม</b><div class="big" id="habitScore">—</div><p>ตารางเวลา แสง คาเฟอีน หน้าจอ และสิ่งแวดล้อม</p></div>
+   <div class="result-hero">
+     <div>
+       <div class="score-ring" id="scoreRing2" style="--p:0; width:180px; height:180px">
+         <div class="score-inner">
+           <div class="score-num" id="scoreNum2">—</div>
+           <div class="score-den">/ 100</div>
+         </div>
+       </div>
+     </div>
+     <div>
+       <div id="resultHeadline" style="font-size:24px; font-weight:800">ยังไม่มีผลประเมิน</div>
+       <p id="resultSummary" style="color:var(--muted); line-height:1.6; margin-top:8px">กรอกแบบประเมินด้านบน ระบบจะสรุปคะแนนและคำแนะนำ</p>
+       <div class="meter"><div id="meterBar"></div></div>
+     </div>
    </div>
+
+   <div class="results">
+    <div class="result-box"><b>ระยะเวลา</b><div class="big" id="durationScore">—</div><p>ความเพียงพอเมื่อเทียบกับอายุ</p></div>
+    <div class="result-box"><b>คุณภาพ</b><div class="big" id="qualityScore">—</div><p>ความสดชื่นและการตื่นกลางคืน</p></div>
+    <div class="result-box"><b>พฤติกรรม</b><div class="big" id="habitScore">—</div><p>ตารางเวลา แสง คาเฟอีน และหน้าจอ</p></div>
+   </div>
+
    <div class="advice" id="adviceList"></div>
-   <div id="riskBox" style="margin-top:15px"></div>
+   <div id="riskBox" style="margin-top:24px"></div>
  </div>
 </section>
 
 <section class="section" id="diary">
- <div class="section-head"><div><h2>3. Sleep Diary — ติดตาม 7 วัน</h2><p class="section-sub">การบันทึกหลายวันช่วยให้เห็นรูปแบบจริงมากกว่าความรู้สึกจากคืนเดียว</p></div><button class="primary" id="addDayBtn">+ เพิ่มคืน</button></div>
+ <div class="section-head">
+   <div><h2>3. Sleep Diary — ติดตาม 7 วัน</h2><p class="section-sub">การบันทึกช่วยให้เห็นรูปแบบจริง</p></div>
+   <button class="ghost" id="addDayBtn">+ เพิ่มคืน</button>
+ </div>
  <div class="panel">
-   <div class="table-scroll"><div class="diary-row diary-head"><div>วันที่</div><div>เข้านอน</div><div>หลับจริง</div><div>ตื่น</div><div>เวลาตื่นสุดท้าย</div><div>คุณภาพ</div><div></div></div><div id="diaryRows"></div></div>
-   <div class="grid2" style="margin-top:18px">
-    <div><div class="section-head" style="margin-bottom:10px"><div><b>แนวโน้ม 7 วัน</b><div class="section-sub" style="font-size:12px">ชั่วโมงนอนและคุณภาพ</div></div></div><canvas id="sleepChart" class="chart" width="700" height="240"></canvas><div class="legend"><span><i class="dot" style="background:#3157d5"></i>ชั่วโมงนอน</span><span><i class="dot" style="background:#9aa9d9"></i>คุณภาพ (0–10)</span></div></div>
-    <div><div class="section-head" style="margin-bottom:10px"><div><b>สิ่งที่ควรจับตา</b></div></div><div class="insight-list" id="insights"></div></div>
+   <div class="table-scroll">
+     <div class="diary-row diary-head">
+       <div>วันที่</div><div>เข้านอน</div><div>หลับจริง</div><div>ตื่น</div><div>เวลาตื่นสุดท้าย</div><div>คุณภาพ (0-10)</div><div></div>
+     </div>
+     <div id="diaryRows"></div>
+   </div>
+   <div class="grid2" style="margin-top:32px">
+    <div>
+      <div class="section-head" style="margin-bottom:16px">
+        <div><b>แนวโน้ม 7 วัน</b></div>
+      </div>
+      <canvas id="sleepChart" class="chart" width="700" height="240"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--primary)"></i>ชั่วโมงนอน</span>
+        <span><i class="dot" style="background:#94a3b8"></i>คุณภาพ</span>
+      </div>
+    </div>
+    <div>
+      <div class="section-head" style="margin-bottom:16px">
+        <div><b>สิ่งที่ควรจับตา</b></div>
+      </div>
+      <div class="insight-list" id="insights"></div>
+    </div>
    </div>
  </div>
 </section>
 
 <section class="section" id="plan">
- <div class="section-head"><div><h2>4. แผน 7 วัน</h2><p class="section-sub">เลือกทำทีละ 2–3 อย่างก่อน เพื่อให้เกิดพฤติกรรมที่ทำต่อได้</p></div></div>
+ <div class="section-head">
+   <div><h2>4. แผน 7 วัน</h2><p class="section-sub">เลือกทำทีละ 2–3 อย่างก่อน เพื่อให้เกิดพฤติกรรมที่ทำต่อได้</p></div>
+ </div>
  <div class="grid3" id="planCards"></div>
 </section>
 
-<footer class="sources"><div style="font-weight:850;color:var(--ink);margin-bottom:8px">แหล่งข้อมูลหลัก</div><div>เกณฑ์ระยะเวลานอน: <a href="https://www.cdc.gov/sleep/about/index.html" target="_blank" rel="noreferrer">CDC — About Sleep</a> • <a href="https://aasm.org/advocacy/position-statements/teen-sleep-duration-health-advisory/" target="_blank" rel="noreferrer">AASM — Teen Sleep Duration</a> • <a href="https://aasm.org/advocacy/position-statements/adult-sleep-duration-health-advisory/" target="_blank" rel="noreferrer">AASM — Adult Sleep Duration</a></div><div>สุขอนามัยการนอนและ sleep diary: <a href="https://www.nhlbi.nih.gov/health/insomnia/treatment" target="_blank" rel="noreferrer">NHLBI — Insomnia Treatment</a> • <a href="https://www.nhlbi.nih.gov/health/sleep-deprivation/healthy-sleep-habits" target="_blank" rel="noreferrer">NHLBI — Healthy Sleep Habits</a></div><div>สัญญาณ sleep apnea: <a href="https://www.nhlbi.nih.gov/health/sleep-apnea/symptoms" target="_blank" rel="noreferrer">NHLBI — Sleep Apnea Symptoms</a></div><div style="margin-top:12px">หมายเหตุ: เครื่องมือนี้มีไว้เพื่อ wellness/การติดตามตนเอง ไม่ใช่เครื่องมือวินิจฉัยหรือทดแทนคำแนะนำทางการแพทย์</div></footer>
+<footer>
+  <div style="font-weight:700; color:var(--ink); margin-bottom:12px">แหล่งข้อมูลอ้างอิงทางการแพทย์</div>
+  <div>เกณฑ์ระยะเวลานอน: <a href="https://www.cdc.gov/sleep/about/index.html" target="_blank">CDC</a> • <a href="https://aasm.org" target="_blank">AASM</a></div>
+  <div>สุขอนามัยการนอน: <a href="https://www.nhlbi.nih.gov/health/insomnia/treatment" target="_blank">NHLBI</a></div>
+  <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line)">หมายเหตุ: เครื่องมือนี้มีไว้เพื่อติดตามตนเอง ไม่ใช่เครื่องมือวินิจฉัยโรคทางการแพทย์</div>
+</footer>
 </main>
 
-<div class="modal" id="infoModal"><div class="modal-card"><div style="display:flex;justify-content:space-between;gap:15px;align-items:center"><h3 style="margin:0">SleepSense คืออะไร?</h3><button class="ghost" id="closeInfo">ปิด</button></div><p style="line-height:1.7;color:#5f6d80">SleepSense เป็นโปรแกรมประเมินสุขภาพการนอนแบบ self-tracking จุดประสงค์คือช่วยให้คุณเห็นรูปแบบการนอนและเลือกพฤติกรรมที่ควรปรับก่อน โดยคะแนน 0–100 เป็นคะแนนเชิง wellness ที่ออกแบบจากตัวชี้วัดในโปรแกรม ไม่ใช่คะแนนทางการแพทย์หรือการวินิจฉัยโรค</p><div class="callout warn"><strong>เมื่อใดควรขอความช่วยเหลือ?</strong><p>ถ้ามีอาการกรนดังร่วมกับสะดุ้งหอบ/สงสัยหยุดหายใจ ง่วงมากจนเสี่ยงต่อความปลอดภัย หรือปัญหาการนอนต่อเนื่องจนกระทบชีวิตประจำวัน ควรคุยกับแพทย์หรือผู้เชี่ยวชาญด้านการนอน</p></div><div class="callout" style="margin-top:10px"><strong>ความเป็นส่วนตัว</strong><p>เวอร์ชันนี้เก็บข้อมูลใน localStorage ของเบราว์เซอร์ คุณสามารถลบข้อมูลทั้งหมดได้จากเมนูจัดการข้อมูล</p></div><div style="display:flex;gap:9px;justify-content:flex-end;margin-top:16px"><button class="danger" id="resetBtn">ลบข้อมูลทั้งหมด</button></div></div></div>
+<div class="modal" id="infoModal">
+  <div class="modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+      <h3 style="margin:0; font-size:20px; font-weight:800">เกี่ยวกับ SleepSense</h3>
+      <button class="ghost" id="closeInfo" style="padding:6px 12px">ปิด</button>
+    </div>
+    <p style="line-height:1.7; color:var(--muted)">SleepSense เป็นโปรแกรมประเมินสุขภาพการนอนเบื้องต้น คะแนนอ้างอิงจากระยะเวลา คุณภาพ และพฤติกรรม ไม่ใช่การวินิจฉัยทางการแพทย์</p>
+    <div class="callout warn" style="margin:20px 0">
+      <strong>เมื่อใดควรพบแพทย์?</strong>
+      <p>หากคุณมีอาการกรนดัง สะดุ้งตื่นเหมือนขาดอากาศ หรือมีปัญหาการนอนเรื้อรังที่กระทบต่อชีวิตประจำวัน ควรปรึกษาแพทย์เฉพาะทาง</p>
+    </div>
+    <div style="display:flex; justify-content:flex-end; margin-top:24px">
+      <button class="danger" id="resetBtn">ลบข้อมูลทั้งหมดในเครื่อง</button>
+    </div>
+  </div>
+</div>
 
 <script>
+// Web Audio API Sound Generator
+let audioCtx = null;
+function playSound(type = 'click') {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    const now = audioCtx.currentTime;
+    if (type === 'click') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    } else if (type === 'success') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.setValueAtTime(659.25, now + 0.08);
+      osc.frequency.setValueAtTime(783.99, now + 0.16);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    }
+  } catch (e) {}
+}
+
+// Active Moving Starfield Background Canvas
+(function initMovingBackground() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let stars = [];
+  let mouseX = 0, mouseY = 0;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    stars = [];
+    const count = Math.floor((width * height) / 8000); // Full star density
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * width - width / 2,
+        y: Math.random() * height - height / 2,
+        z: Math.random() * 1000,
+        r: Math.random() * 2 + 0.5
+      });
+    }
+  }
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX - width / 2) * 0.02;
+    mouseY = (e.clientY - height / 2) * 0.02;
+  });
+
+  resize();
+
+  function render() {
+    ctx.clearRect(0, 0, width, height);
+    const cx = width / 2;
+    const cy = height / 2;
+
+    stars.forEach(star => {
+      star.z -= 0.5; // Active background particle speed
+      if (star.z <= 0) star.z = 1000;
+
+      const k = 252 / star.z;
+      const px = (star.x + mouseX) * k + cx;
+      const py = (star.y + mouseY) * k + cy;
+
+      if (px >= 0 && px <= width && py >= 0 && py <= height) {
+        const size = (1 - star.z / 1000) * star.r;
+        const alpha = (1 - star.z / 1000) * 0.4;
+        ctx.fillStyle = `rgba(59, 130, 246, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(px, py, Math.max(0, size), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// App Logic
 const KEY='sleepsense.v1';
 const el=id=>document.getElementById(id);
 const qs=s=>document.querySelector(s), qsa=s=>[...document.querySelectorAll(s)];
 const state=JSON.parse(localStorage.getItem(KEY)||'null')||{assessment:{},diary:[],plan:{}};
+
 function save(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
 function val(id){return el(id).value}
 function bool(id){return el(id).checked}
 function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
 function parseTime(s){if(!s)return 0;const [h,m]=s.split(':').map(Number);return h*60+m}
 function diffMin(a,b){let d=parseTime(b)-parseTime(a); if(d<=0)d+=1440; return d}
-function fmtHours(m){return (m/60).toFixed(1)}
-function ageTarget(age){if(age>=13&&age<=17)return [8,10]; if(age>=18&&age<=60)return [7,9]; if(age>=61&&age<=64)return [7,9]; if(age>=65)return [7,8]; if(age>=6&&age<=12)return [9,12]; if(age>=3&&age<=5)return [10,13]; return [0,24]}
-function durationScore(age, hours){const [lo,hi]=ageTarget(age);if(!lo)return 70;if(hours<lo)return clamp(100-Math.round((lo-hours)*28),0,100);if(hours>hi)return clamp(100-Math.round((hours-hi)*10),65,100);return 100}
+function ageTarget(age){
+  if(age>=13&&age<=17)return [8,10]; if(age>=18&&age<=60)return [7,9]; 
+  if(age>=61&&age<=64)return [7,9]; if(age>=65)return [7,8]; 
+  if(age>=6&&age<=12)return [9,12]; if(age>=3&&age<=5)return [10,13]; 
+  return [0,24]
+}
+
+function durationScore(age, hours){
+  const [lo,hi]=ageTarget(age);
+  if(!lo)return 70;
+  if(hours<lo)return clamp(100-Math.round((lo-hours)*28),0,100);
+  if(hours>hi)return clamp(100-Math.round((hours-hi)*10),65,100);
+  return 100;
+}
+
 function calcAssessment(){
  const age=Number(val('age'))||0;
- const targetWake=val('wakeTarget'),targetBed=val('bedTarget');
+ const targetWake=val('wakeTarget'), targetBed=val('bedTarget');
  const planned=diffMin(targetBed,targetWake)/60;
  const quality=clamp(100-(Number(val('latency'))*14+Number(val('awaken'))*14+(10-Number(val('refresh')))*4+Number(val('daySleepy'))*3+Number(val('quality'))*10),0,100);
  const habits=clamp(100-(Number(val('caffeine'))*9+Number(val('screen'))*8+Number(val('schedule'))*9+Number(val('exercise'))*6+Number(val('environment'))*6+Number(val('stress'))*7+Number(val('nap'))*4),0,100);
@@ -214,8 +538,9 @@ function calcAssessment(){
  let score=Math.round(dur*.36+quality*.34+habits*.30);
  const flags={snore:bool('snore'),gasp:bool('gasp'),dangerSleepy:bool('dangerSleepy'),persistent:bool('persistent')};
  state.assessment={age,targetWake,targetBed,planned,latency:Number(val('latency')),awaken:Number(val('awaken')),refresh:Number(val('refresh')),daySleepy:Number(val('daySleepy')),qualityRaw:Number(val('quality')),caffeine:Number(val('caffeine')),screen:Number(val('screen')),schedule:Number(val('schedule')),exercise:Number(val('exercise')),environment:Number(val('environment')),stress:Number(val('stress')),nap:Number(val('nap')),flags,score,dur,quality,habits,ts:new Date().toISOString()};
- save();return state.assessment;
+ save(); return state.assessment;
 }
+
 function setAssessment(a){
  if(!a)return;
  const map=['age','wakeTarget','bedTarget','latency','awaken','refresh','daySleepy','quality','caffeine','screen','schedule','exercise','environment','stress','nap'];
@@ -223,84 +548,181 @@ function setAssessment(a){
  ['snore','gasp','dangerSleepy','persistent'].forEach(id=>el(id).checked=!!a.flags?.[id]);
  qsa('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab==='basic'));
  qsa('.tabbody').forEach(x=>x.style.display=x.id==='tab-basic'?'block':'none');
- el('refreshVal').textContent=a.refresh+'/10';el('daySleepyVal').textContent=a.daySleepy+'/10';
+ el('refreshVal').textContent=a.refresh+'/10'; el('daySleepyVal').textContent=a.daySleepy+'/10';
 }
-function statusFor(s){if(s>=80)return ['ดี','good'];if(s>=60)return ['ควรปรับบางจุด','warn'];return ['ควรดูแลเพิ่ม','bad']}
+
+function statusFor(s){if(s>=80)return ['ดี','good'];if(s>=60)return ['ควรปรับปรุง','warn'];return ['ต้องดูแลพิเศษ','bad']}
+
 function adviceFrom(a){
  const list=[];
  const [lo,hi]=ageTarget(a.age);
- if(a.age&&a.planned<lo)list.push(['เวลา','เพิ่มเวลาสำหรับการนอน',`เวลาที่วางแผนไว้ราว ${a.planned.toFixed(1)} ชั่วโมง ต่ำกว่าช่วงที่แนะนำสำหรับอายุนี้ (${lo}–${hi} ชั่วโมง/24 ชั่วโมง)`]);
- if(a.latency>=2)list.push(['ก่อนนอน','สร้างช่วงผ่อนเครื่อง 30–60 นาที','ลดกิจกรรมกระตุ้น เปลี่ยนเป็นกิจวัตรเดิม ๆ เช่น อาบน้ำ อ่านหนังสือ หรือหายใจช้า ๆ']);
- if(a.awaken>=2)list.push(['สภาพแวดล้อม','ทำห้องให้มืด เงียบ และอุณหภูมิสบาย','ตรวจแสง เสียง ความร้อน/เย็น และการแจ้งเตือนมือถือที่รบกวนช่วงหลับ']);
- if(a.screen>=2)list.push(['แสง/หน้าจอ','วางมือถือก่อนนอนอย่างน้อย 30 นาที','เริ่มจากเวลาที่ทำได้จริง แล้วค่อยขยับให้ไกลขึ้น']);
- if(a.caffeine>=2)list.push(['คาเฟอีน','ลดคาเฟอีนช่วงบ่าย/เย็น','สังเกตเวลาที่กินกาแฟ ชา น้ำอัดลม หรือเครื่องดื่มชูกำลัง แล้วเลื่อนให้เร็วขึ้น']);
- if(a.schedule>=2)list.push(['นาฬิกาชีวภาพ','คงเวลาตื่นให้สม่ำเสมอ','พยายามให้วันหยุดต่างจากวันปกติไม่มากเกินไป และรับแสงธรรมชาติช่วงเช้าหรือกลางวัน']);
- if(a.exercise>=2)list.push(['กิจกรรม','เพิ่มกิจกรรมทางกายในตอนกลางวัน','การเดินหรือออกกำลังกายสม่ำเสมอช่วยสนับสนุนสุขอนามัยการนอน']);
- if(a.stress>=2)list.push(['ความคิดก่อนนอน','ทำ brain-dump ก่อนขึ้นเตียง','จดสิ่งที่ต้องทำ/กังวลลงกระดาษ แล้วกำหนดเวลาจัดการในวันถัดไป']);
- if(a.daySleepy>=7)list.push(['กลางวัน','จัดการความง่วงอย่างจริงจัง','ถ้าง่วงมากจนกระทบการเรียน งาน หรือความปลอดภัย ควรขอคำประเมินจากผู้เชี่ยวชาญ']);
- if(!list.length)list.push(['รักษาจุดแข็ง','ทำสิ่งที่กำลังได้ผลต่อไป','คงเวลานอน-ตื่นและสภาพแวดล้อมที่ดีไว้ แล้วใช้ sleep diary ตรวจแนวโน้ม']);
+ if(a.age&&a.planned<lo)list.push(['เวลา','เพิ่มเวลานอน',`เวลาเป้าหมาย ${a.planned.toFixed(1)} ชม. ต่ำกว่าเกณฑ์ (${lo}–${hi} ชม.)`]);
+ if(a.latency>=2)list.push(['ก่อนนอน','ผ่อนคลาย 30 นาที','ลดกิจกรรมกระตุ้น อ่านหนังสือ หรือฟังเพลงเบาๆ']);
+ if(a.awaken>=2)list.push(['สภาพแวดล้อม','คุมความมืดและเสียง','ปรับห้องให้มืด เงียบ และเย็นสบาย']);
+ if(a.screen>=2)list.push(['แสงหน้าจอ','ลดมือถือก่อนนอน','แสงสีฟ้ากดทับเมลาโทนิน ควรลดการใช้ 30 นาทีก่อนนอน']);
+ if(a.caffeine>=2)list.push(['คาเฟอีน','งดกาแฟช่วงบ่าย','เลี่ยงเครื่องดื่มชูกำลังหรือชาหลังบ่ายโมง']);
+ if(a.schedule>=2)list.push(['ความสม่ำเสมอ','ตื่นเวลาเดิม','ให้วันหยุดต่างจากวันปกติไม่เกิน 1 ชั่วโมง']);
+ if(!list.length)list.push(['ดีมาก','รักษากิจวัตรที่ดี','คุณมีพื้นฐานการนอนที่ดีแล้ว ติดตามด้วย Diary ต่อไป']);
  return list.slice(0,6);
 }
+
 function renderAssessment(a){
- const s=statusFor(a.score);el('scoreNum').textContent=a.score;el('scoreNum2').textContent=a.score;el('scoreRing').style.setProperty('--p',a.score);el('scoreRing2').style.setProperty('--p',a.score);el('scoreStatus').textContent=s[0];el('scoreStatus').className='status '+s[1];el('scoreLabel').textContent=a.score>=80?'ภาพรวมค่อนข้างดี':a.score>=60?'มีบางด้านที่ควรปรับ':'มีหลายด้านที่ควรให้ความสำคัญ';el('meterBar').style.width=a.score+'%';
- el('durationScore').textContent=Math.round(a.dur)+'/100';el('qualityScore').textContent=Math.round(a.quality)+'/100';el('habitScore').textContent=Math.round(a.habits)+'/100';
- const headline=a.score>=80?'พื้นฐานการนอนอยู่ในเกณฑ์น่าพอใจ':a.score>=60?'มีจุดที่ปรับได้หลายจุด':'ควรเริ่มปรับพื้นฐานและติดตามต่อเนื่อง';el('resultHeadline').textContent=headline;
- el('resultSummary').textContent=`คะแนน ${a.score}/100 เป็น wellness score จากระยะเวลา คุณภาพ และพฤติกรรม ไม่ใช่การวินิจฉัยโรค`;
- el('adviceList').innerHTML=adviceFrom(a).map(x=>`<div class="advice-card"><div class="tag">${x[0]}</div><h3>${x[1]}</h3><p>${x[2]}</p><div class="why">เป้าหมาย: ทำสิ่งนี้ต่อเนื่อง 7 วันแล้วดูแนวโน้ม</div></div>`).join('');
- const flags=a.flags||{};let risk='';
- if((flags.gasp||flags.snore)&&flags.dangerSleepy){risk='<div class="callout bad"><strong>แนะนำให้คุยกับแพทย์/คลินิกการนอน</strong><p>คุณมีทั้งสัญญาณการหายใจระหว่างหลับที่ควรตรวจเพิ่มเติมและความง่วงกลางวันที่กระทบการตื่นตัว โปรแกรมไม่สามารถบอกได้ว่าเป็น sleep apnea หรือโรคใด แต่ควรรับการประเมิน โดยอาจรวมถึง sleep study ตามดุลยพินิจผู้ให้บริการ</p></div>'}
- else if(flags.gasp||flags.snore){risk='<div class="callout warn"><strong>มีสัญญาณที่ควรประเมินเพิ่มเติม</strong><p>กรนดังหรือสะดุ้งหอบ/สงสัยหยุดหายใจระหว่างหลับเป็นเหตุผลให้ปรึกษาผู้ให้บริการสุขภาพ โดยเฉพาะหากเกิดบ่อยหรือมีความง่วงกลางวันร่วมด้วย</p></div>'}
- else if(flags.persistent||flags.dangerSleepy){risk='<div class="callout warn"><strong>ควรขอคำประเมินเพิ่มเติม</strong><p>ปัญหาการนอนที่ต่อเนื่องและรบกวนชีวิตประจำวัน หรือความง่วงมากผิดปกติ ควรคุยกับแพทย์/ผู้เชี่ยวชาญแทนการพยายามแก้เองอย่างเดียว</p></div>'}
- else risk='<div class="callout good"><strong>ไม่พบสัญญาณเตือนสำคัญจากแบบประเมินนี้</strong><p>ยังควรดูแนวโน้มจาก sleep diary เพราะอาการและรูปแบบการนอนอาจเปลี่ยนได้ตามเวลา</p></div>';
+ const s=statusFor(a.score);
+ el('scoreNum').textContent=a.score; el('scoreNum2').textContent=a.score;
+ el('scoreRing').style.setProperty('--p',a.score); el('scoreRing2').style.setProperty('--p',a.score);
+ el('scoreStatus').textContent=s[0]; el('scoreStatus').className='status '+s[1];
+ el('scoreLabel').textContent=a.score>=80?'ยอดเยี่ยม':a.score>=60?'ทำได้ดี แต่ปรับปรุงได้อีก':'ควรให้ความสำคัญกับการนอน';
+ el('meterBar').style.width=a.score+'%';
+ el('durationScore').textContent=Math.round(a.dur)+'/100';
+ el('qualityScore').textContent=Math.round(a.quality)+'/100';
+ el('habitScore').textContent=Math.round(a.habits)+'/100';
+ el('resultHeadline').textContent=a.score>=80?'การนอนอยู่ในเกณฑ์ดีเยี่ยม':a.score>=60?'มีบางจุดที่ปรับแก้ได้':'ควรเริ่มปรับพื้นฐานด่วน';
+ el('adviceList').innerHTML=adviceFrom(a).map(x=>`<div class="advice-card"><span class="tag">${x[0]}</span><h3>${x[1]}</h3><p>${x[2]}</p></div>`).join('');
+ 
+ const flags=a.flags||{}; let risk='';
+ if((flags.gasp||flags.snore)&&flags.dangerSleepy) risk='<div class="callout bad"><strong>แนะนำให้พบแพทย์</strong><p>คุณมีสัญญาณหยุดหายใจขณะหลับร่วมกับความง่วงรุนแรง ควรรับการตรวจ Sleep Test</p></div>';
+ else if(flags.gasp||flags.snore) risk='<div class="callout warn"><strong>สัญญาณการกรน / หยุดหายใจ</strong><p>ควรสังเกตอาการ หากกระทบการใช้ชีวิตควรปรึกษาแพทย์</p></div>';
+ else risk='<div class="callout good"><strong>ไม่พบความเสี่ยงรุนแรง</strong><p>รักษาพฤติกรรมที่ดีไว้และติดตามต่อเนื่อง</p></div>';
  el('riskBox').innerHTML=risk;
 }
-function addDiaryRow(d){state.diary.push(d||{date:new Date().toISOString().slice(0,10),bed:'22:30',sleep:'23:00',wake:'06:30',last:'06:30',quality:6});state.diary=state.diary.slice(-7);save()}
-function diaryDefaults(){const base=new Date();base.setDate(base.getDate()-state.diary.length);return {date:base.toISOString().slice(0,10),bed:'22:30',sleep:'23:00',wake:'06:30',last:'06:30',quality:6}}
+
+function addDiaryRow(d){
+  state.diary.push(d||{date:new Date().toISOString().slice(0,10), bed:'22:30', sleep:'23:00', wake:'06:30', last:'06:30', quality:6});
+  state.diary=state.diary.slice(-7); save();
+}
+
 function renderDiary(){
- el('daysLogged').textContent=state.diary.length;el('diaryRows').innerHTML='';
- if(!state.diary.length){el('diaryRows').innerHTML='<div class="empty">ยังไม่มีบันทึก ลองกด “เพิ่มคืน” แล้วกรอกข้อมูลคืนนี้</div>';drawChart();renderInsights();return}
- state.diary.forEach((d,i)=>{const row=document.createElement('div');row.className='diary-row';row.innerHTML=`<div><input type="date" value="${d.date||''}" data-k="date" data-i="${i}"></div><div><input type="time" value="${d.bed||''}" data-k="bed" data-i="${i}"></div><div><input type="time" value="${d.sleep||''}" data-k="sleep" data-i="${i}"></div><div><input type="time" value="${d.wake||''}" data-k="wake" data-i="${i}"></div><div><input type="time" value="${d.last||''}" data-k="last" data-i="${i}"></div><div><input type="number" min="0" max="10" value="${d.quality??6}" data-k="quality" data-i="${i}"></div><div><button class="ghost" data-del="${i}">×</button></div>`;el('diaryRows').appendChild(row)});
- qsa('#diaryRows input').forEach(x=>x.addEventListener('change',()=>{state.diary[Number(x.dataset.i)][x.dataset.k]=x.type==='number'?Number(x.value):x.value;save()}));
- qsa('[data-del]').forEach(b=>b.addEventListener('click',()=>{state.diary.splice(Number(b.dataset.del),1);save()})); drawChart();renderInsights();
+ el('daysLogged').textContent=state.diary.length; el('diaryRows').innerHTML='';
+ if(!state.diary.length){
+   el('diaryRows').innerHTML='<div class="empty">ยังไม่มีบันทึก กด “เพิ่มคืน” เพื่อเริ่มจด Diary</div>';
+   drawChart(); renderInsights(); return;
+ }
+ state.diary.forEach((d,i)=>{
+   const row=document.createElement('div'); row.className='diary-row';
+   row.innerHTML=`<div><input type="date" value="${d.date||''}" data-k="date" data-i="${i}"></div><div><input type="time" value="${d.bed||''}" data-k="bed" data-i="${i}"></div><div><input type="time" value="${d.sleep||''}" data-k="sleep" data-i="${i}"></div><div><input type="time" value="${d.wake||''}" data-k="wake" data-i="${i}"></div><div><input type="time" value="${d.last||''}" data-k="last" data-i="${i}"></div><div><input type="number" min="0" max="10" value="${d.quality??6}" data-k="quality" data-i="${i}"></div><div><button class="ghost" data-del="${i}" style="padding:8px">×</button></div>`;
+   el('diaryRows').appendChild(row);
+ });
+ qsa('#diaryRows input').forEach(x=>x.addEventListener('change',()=>{state.diary[Number(x.dataset.i)][x.dataset.k]=x.type==='number'?Number(x.value):x.value; save()}));
+ qsa('[data-del]').forEach(b=>b.addEventListener('click',()=>{
+   playSound('click');
+   state.diary.splice(Number(b.dataset.del),1); save();
+ })); 
+ drawChart(); renderInsights();
 }
+
 function diaryStats(){
- if(!state.diary.length)return null;const hours=state.diary.map(d=>diffMin(d.sleep,d.wake)/60).filter(Number.isFinite);const bedmins=state.diary.map(d=>diffMin(d.bed,d.wake));const eff=hours.length?hours.reduce((a,b)=>a+b,0)/hours.length:0;const efficiency=hours.length?Math.round(hours.reduce((a,h,i)=>a+(h/(bedmins[i]/60))*100,0)/hours.length):0;const wake=state.diary.map(d=>parseTime(d.wake));const mean=wake.reduce((a,b)=>a+b,0)/wake.length;const sd=Math.sqrt(wake.reduce((a,x)=>a+(x-mean)**2,0)/wake.length);return {avg:eff,efficiency,sd,wakeCount:wake.length,qualities:state.diary.map(d=>Number(d.quality)||0)}}
-function renderOverview(){const st=diaryStats();if(!st){el('avgSleep').textContent='—';el('efficiency').textContent='—';el('regularity').textContent='—';return}el('avgSleep').textContent=st.avg.toFixed(1);el('efficiency').textContent=st.efficiency+'%';el('regularity').textContent=clamp(100-Math.round(st.sd/60*50),0,100)+'%'}
-function drawChart(){const c=el('sleepChart'),ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);ctx.font='12px Inter, sans-serif';ctx.fillStyle='#7c8798';if(!state.diary.length){ctx.fillText('เพิ่มข้อมูลเพื่อดูกราฟ',18,30);return}const pad={l:35,r:15,t:18,b:25};const iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;for(let i=0;i<=5;i++){const y=pad.t+ih*i/5;ctx.strokeStyle='#eef0f5';ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillStyle='#8792a2';ctx.fillText(String(10-i*2),5,y+4)}
- const pts1=state.diary.map((d,i)=>{const v=diffMin(d.sleep,d.wake)/60;return [pad.l+(i/(Math.max(1,state.diary.length-1)))*iw,pad.t+ih*(1-clamp(v/12,0,1))]});const pts2=state.diary.map((d,i)=>{const v=Number(d.quality)||0;return [pad.l+(i/(Math.max(1,state.diary.length-1)))*iw,pad.t+ih*(1-v/10)]});
- [[pts1,'#3157d5'],[pts2,'#9aa9d9']].forEach(([pts,color])=>{ctx.strokeStyle=color;ctx.lineWidth=3;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.stroke();pts.forEach(p=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(p[0],p[1],4,0,Math.PI*2);ctx.fill()})});
- state.diary.forEach((d,i)=>{ctx.fillStyle='#7c8798';ctx.fillText((d.date||'').slice(5),pts1[i][0]-15,h-7)})
+ if(!state.diary.length)return null;
+ const hours=state.diary.map(d=>diffMin(d.sleep,d.wake)/60).filter(Number.isFinite);
+ const bedmins=state.diary.map(d=>diffMin(d.bed,d.wake));
+ const eff=hours.length?hours.reduce((a,b)=>a+b,0)/hours.length:0;
+ const efficiency=hours.length?Math.round(hours.reduce((a,h,i)=>a+(h/(bedmins[i]/60))*100,0)/hours.length):0;
+ const wake=state.diary.map(d=>parseTime(d.wake));
+ const mean=wake.reduce((a,b)=>a+b,0)/wake.length;
+ const sd=Math.sqrt(wake.reduce((a,x)=>a+(x-mean)**2,0)/wake.length);
+ return {avg:eff, efficiency, sd, wakeCount:wake.length, qualities:state.diary.map(d=>Number(d.quality)||0)}
 }
-function renderInsights(){const box=el('insights');if(!state.diary.length){box.innerHTML='<div class="insight"><div class="num">1</div><p>เมื่อมีข้อมูล 3–7 คืน ระบบจะแสดงรูปแบบ เช่น เวลานอนสั้นลงในวันเรียนหรือคุณภาพตกในคืนที่เวลาตื่นแกว่ง</p></div>';return}const st=diaryStats();const arr=[];if(st.avg<7)arr.push('เวลานอนเฉลี่ยค่อนข้างสั้นในช่วงที่บันทึก');if(st.efficiency<85)arr.push('เวลาบนเตียงกับเวลาหลับต่างกันพอสมควร');if(st.sd>45)arr.push('เวลาตื่นแกว่งมากกว่า ~45 นาที ควรลองคงเวลาตื่นให้สม่ำเสมอ');const q=st.qualities.reduce((a,b)=>a+b,0)/st.qualities.length;if(q<6)arr.push('คุณภาพที่ประเมินเองเฉลี่ยต่ำกว่า 6/10');if(!arr.length)arr.push('แนวโน้มในบันทึกยังไม่พบจุดที่เด่นชัด—ติดตามต่ออีกไม่กี่วัน');box.innerHTML=arr.slice(0,4).map((x,i)=>`<div class="insight"><div class="num">${i+1}</div><p>${x}</p></div>`).join('')}
-function renderPlan(){const a=state.assessment;const cards=[['คืนนี้','คงเวลาตื่นที่ตั้งไว้','จัดเวลาให้พอนอนตามเป้าหมาย และพยายามให้วันหยุดไม่ต่างมาก'],['ก่อนนอน','ลดหน้าจอ 30+ นาที','ใช้กิจวัตรเดิมที่สงบและทำซ้ำได้ทุกคืน'],['ช่วงกลางวัน','รับแสงธรรมชาติและขยับร่างกาย','โดยเฉพาะช่วงเช้าหรือกลางวัน และหลีกเลี่ยงการออกกำลังกายหนักใกล้เวลานอน'],['คาเฟอีน','ย้ายคาเฟอีนให้เร็วขึ้น','ใช้ sleep diary เชื่อมเวลาคาเฟอีนกับคุณภาพการนอน'],['ห้องนอน','ทำให้มืด เงียบ สบาย','ลดสิ่งรบกวนที่ทำให้ตื่นหรือทำให้หลับยาก'],['ทบทวน','เช็กหลัง 7 วัน','ดูชั่วโมงนอน ความสม่ำเสมอ คุณภาพ และง่วงตอนกลางวันแทนการตัดสินจากคืนเดียว']];el('planCards').innerHTML=cards.map(c=>`<div class="panel"><div class="eyebrow">${c[0]}</div><h3 style="margin:7px 0">${c[1]}</h3><p style="margin:0;color:var(--muted);font-size:13px;line-height:1.6">${c[2]}</p></div>`).join('')}
-function renderAll(){const a=state.assessment;if(a){setAssessment(a);renderAssessment(a)}renderDiary();renderOverview();renderPlan()}
 
-qsa('[data-tab]').forEach(b=>b.addEventListener('click',()=>{qsa('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));qsa('.tabbody').forEach(x=>x.style.display=x.id==='tab-'+b.dataset.tab?'block':'none')}));
-['refresh','daySleepy'].forEach(id=>el(id).addEventListener('input',()=>{el(id+'Val').textContent=el(id).value+'/10'}));
-el('assessBtn').addEventListener('click',()=>{calcAssessment();el('results').scrollIntoView({behavior:'smooth'});});
-el('startBtn').addEventListener('click',()=>el('assessment').scrollIntoView({behavior:'smooth'}));
-el('scrollDiary').addEventListener('click',()=>el('diary').scrollIntoView({behavior:'smooth'}));
-el('quickDiaryBtn').addEventListener('click',()=>{addDiaryRow();el('diary').scrollIntoView({behavior:'smooth'})});
-el('addDayBtn').addEventListener('click',()=>addDiaryRow(diaryDefaults()));
-el('infoBtn').addEventListener('click',()=>el('infoModal').classList.add('open'));el('closeInfo').addEventListener('click',()=>el('infoModal').classList.remove('open'));el('infoModal').addEventListener('click',e=>{if(e.target===el('infoModal'))el('infoModal').classList.remove('open')});
-el('resetBtn').addEventListener('click',()=>{if(confirm('ต้องการลบแบบประเมินและ Sleep Diary ทั้งหมดหรือไม่?')){localStorage.removeItem(KEY);location.reload()}});
+function renderOverview(){
+  const st=diaryStats();
+  if(!st){el('avgSleep').textContent='—'; el('efficiency').textContent='—'; el('regularity').textContent='—'; return}
+  el('avgSleep').textContent=st.avg.toFixed(1); el('efficiency').textContent=st.efficiency+'%'; el('regularity').textContent=clamp(100-Math.round(st.sd/60*50),0,100)+'%';
+}
+
+function drawChart(){
+ const c=el('sleepChart'), ctx=c.getContext('2d'), w=c.width, h=c.height;
+ ctx.clearRect(0,0,w,h); ctx.font='12px Inter'; ctx.fillStyle='#94a3b8';
+ if(!state.diary.length){ctx.fillText('เพิ่มข้อมูลเพื่อดูกราฟ',18,30); return}
+ const pad={l:35,r:15,t:18,b:25}, iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+ 
+ for(let i=0;i<=5;i++){
+   const y=pad.t+ih*i/5; ctx.strokeStyle='#f1f5f9'; ctx.beginPath();
+   ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke();
+   ctx.fillStyle='#64748b'; ctx.fillText(String(10-i*2),5,y+4);
+ }
+ 
+ const pts1=state.diary.map((d,i)=>{const v=diffMin(d.sleep,d.wake)/60; return [pad.l+(i/(Math.max(1,state.diary.length-1)))*iw,pad.t+ih*(1-clamp(v/12,0,1))]});
+ const pts2=state.diary.map((d,i)=>{const v=Number(d.quality)||0; return [pad.l+(i/(Math.max(1,state.diary.length-1)))*iw,pad.t+ih*(1-v/10)]});
+ 
+ [[pts1,'#3b82f6'],[pts2,'#cbd5e1']].forEach(([pts,color])=>{
+   ctx.strokeStyle=color; ctx.lineWidth=3; ctx.beginPath();
+   pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p)); ctx.stroke();
+   pts.forEach(p=>{ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p[0],p[1],5,0,Math.PI*2); ctx.fill()})
+ });
+}
+
+function renderInsights(){
+ const box=el('insights');
+ if(!state.diary.length){box.innerHTML='<div class="insight"><div class="num">1</div><p>เมื่อมีข้อมูล 3–7 คืน ระบบจะวิเคราะห์รูปแบบการนอนให้</p></div>'; return}
+ const st=diaryStats(), arr=[];
+ if(st.avg<7)arr.push('เวลานอนเฉลี่ยต่ำกว่าเกณฑ์มาตรฐานผู้ใหญ่');
+ if(st.efficiency<85)arr.push('ใช้เวลาพลิกตัวบนเตียงนานเกินไป');
+ if(st.sd>45)arr.push('เวลาตื่นค่อนข้างแกว่ง ส่งผลเสียต่อนาฬิกาชีวิต');
+ if(!arr.length)arr.push('ข้อมูลอยู่ในเกณฑ์เสถียร ติดตามต่อไป');
+ box.innerHTML=arr.slice(0,3).map((x,i)=>`<div class="insight"><div class="num">${i+1}</div><p>${x}</p></div>`).join('');
+}
+
+function renderPlan(){
+ const cards=[
+   ['เป้าหมาย 1','คุมเวลาตื่น','ตื่นเวลาเดิมทุกวัน รวมถึงวันหยุด'],
+   ['เป้าหมาย 2','งดจอ 30 นาที','อ่านหนังสือแทนการไถฟีด'],
+   ['เป้าหมาย 3','รับแสงเช้า','เปิดม่านรับแสงแดดทันทีที่ตื่น']
+ ];
+ el('planCards').innerHTML=cards.map(c=>`<div class="panel"><div class="eyebrow">${c[0]}</div><h3 style="margin:8px 0">${c[1]}</h3><p style="margin:0;color:var(--muted);font-size:14px">${c[2]}</p></div>`).join('');
+}
+
+function renderAll(){
+ const a=state.assessment; if(a){setAssessment(a); renderAssessment(a)}
+ renderDiary(); renderOverview(); renderPlan();
+}
+
+// Event Listeners with Sound Effects
+qsa('button').forEach(btn => {
+  btn.addEventListener('click', () => playSound('click'));
+});
+
+qsa('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
+ playSound('click');
+ qsa('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));
+ qsa('.tabbody').forEach(x=>x.style.display=x.id==='tab-'+b.dataset.tab?'block':'none');
+}));
+
+['refresh','daySleepy'].forEach(id=>el(id).addEventListener('input',()=>el(id+'Val').textContent=el(id).value+'/10'));
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(window.__toast);
+  window.__toast=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+el('assessBtn').addEventListener('click',()=>{
+  calcAssessment(); 
+  el('results').scrollIntoView(); 
+  playSound('success');
+  showToast('วิเคราะห์เสร็จสิ้น ✦');
+});
+
+el('startBtn').addEventListener('click',()=>el('assessment').scrollIntoView());
+el('scrollDiary').addEventListener('click',()=>el('diary').scrollIntoView());
+el('quickDiaryBtn').addEventListener('click',()=>{
+  addDiaryRow(); 
+  el('diary').scrollIntoView(); 
+  playSound('success');
+  showToast('เพิ่มบันทึกวันนี้แล้ว');
+});
+
+el('addDayBtn').addEventListener('click',()=>{
+  const base=new Date(); base.setDate(base.getDate()-state.diary.length);
+  addDiaryRow({date:base.toISOString().slice(0,10), bed:'22:30', sleep:'23:00', wake:'06:30', last:'06:30', quality:6});
+  playSound('success');
+  showToast('เพิ่มคืนใหม่แล้ว');
+});
+
+el('infoBtn').addEventListener('click',()=>el('infoModal').classList.add('open'));
+el('closeInfo').addEventListener('click',()=>el('infoModal').classList.remove('open'));
+el('resetBtn').addEventListener('click',()=>{if(confirm('ต้องการลบข้อมูลทั้งหมด?')){localStorage.removeItem(KEY);location.reload()}});
+
 renderAll();
-
-
-/* === interactive 3D atmosphere + tactile feedback === */
-(function(){
- const canvas=document.getElementById('aurora3d'),ctx=canvas.getContext('2d');let W,H,dpr,pts=[],mx=.5,my=.5,tx=.5,ty=.5;
- function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);pts=Array.from({length:Math.min(95,Math.floor(W/14))},()=>({x:Math.random()*W,y:Math.random()*H,z:.2+Math.random()*.8,r:.5+Math.random()*2,v:.15+Math.random()*.45}))}
- function frame(t){mx+=(tx-mx)*.035;my+=(ty-my)*.035;ctx.clearRect(0,0,W,H);let g=ctx.createRadialGradient(W*(.5+mx*.12),H*(.18+my*.08),0,W*.5,H*.35,Math.max(W,H)*.75);g.addColorStop(0,'rgba(79,91,255,.17)');g.addColorStop(.38,'rgba(31,188,255,.055)');g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);pts.forEach(p=>{p.y-=p.v;if(p.y<-10)p.y=H+10;let x=p.x+(mx-.5)*35*p.z,y=p.y+(my-.5)*25*p.z;ctx.beginPath();ctx.arc(x,y,p.r*p.z,0,Math.PI*2);ctx.fillStyle=`rgba(160,180,255,${.12+.3*p.z})`;ctx.fill()});requestAnimationFrame(frame)}
- addEventListener('resize',resize);addEventListener('pointermove',e=>{tx=e.clientX/W;ty=e.clientY/H});resize();requestAnimationFrame(frame);
- document.querySelectorAll('button,.tab,.check,input,select').forEach(el=>el.classList.add('ripple-host'));
- function sound(type='click'){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const a=new AC(),o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.setValueAtTime(type==='success'?660:type==='error'?180:420,a.currentTime);o.frequency.exponentialRampToValueAtTime(type==='success'?920:type==='error'?120:520,a.currentTime+.09);g.gain.setValueAtTime(.0001,a.currentTime);g.gain.exponentialRampToValueAtTime(.055,a.currentTime+.008);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.12);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.13);setTimeout(()=>a.close(),180)}catch(e){}}
- function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),1800)}
- document.addEventListener('click',e=>{const b=e.target.closest('button,.tab');if(!b)return;const r=b.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;const s=document.createElement('i');s.className='ripple';s.style.left=x+'px';s.style.top=y+'px';s.style.width=s.style.height=Math.max(r.width,r.height)*.35+'px';b.appendChild(s);setTimeout(()=>s.remove(),650);sound(b.id==='assessBtn'?'success':'click');if(b.id==='assessBtn')toast('วิเคราะห์การนอนเรียบร้อย ✦');else if(b.id==='addDayBtn'||b.id==='quickDiaryBtn')toast('เพิ่มข้อมูล Sleep Diary แล้ว');});
- document.querySelectorAll('.hero-card,.score-card,.panel').forEach(card=>card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect(),rx=((e.clientY-r.top)/r.height-.5)*-2,ry=((e.clientX-r.left)/r.width-.5)*2;card.style.transform=`perspective(1100px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(4px)`}));
- document.querySelectorAll('.hero-card,.score-card,.panel').forEach(card=>card.addEventListener('pointerleave',()=>card.style.transform=''));
- window.SleepSenseFX={sound,toast};
-})();
 </script>
 </body>
 </html>
