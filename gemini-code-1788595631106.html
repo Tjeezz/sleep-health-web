@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>SleepSense — โปรแกรมประเมินและดูแลสุขภาพการนอน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8fafc; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+  --primary:#3b82f6; --primary-hover:#2563eb; --soft:#eff6ff; 
+  --good:#059669; --goodbg:#d1fae5;
+  --warn:#d97706; --warnbg:#fef3c7; 
+  --bad:#e11d48; --badbg:#ffe4e6; 
+  --shadow:0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  --radius:20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background-color:var(--bg);
+  font-family:'Inter', 'Noto Sans Thai', sans-serif;
+  color:var(--ink);
+  line-height:1.5;
+  overflow-x:hidden;
+}
+
+/* Moving Starfield Background Canvas */
+#bg-canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  z-index:-1;
+  pointer-events:none;
+}
+
+button,input,select,textarea{font:inherit}
+/* UI Movement Slowed Down & Calmed */
+button{cursor:pointer; transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;}
+button:active{transform:scale(0.99)!important}
+.wrap{max-width:1180px; margin:auto; padding:0 20px}
+
+/* Navbar */
+.topbar{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--line)}
+.nav{height:72px; display:flex; align-items:center; justify-content:space-between; gap:14px}
+.brand{display:flex; align-items:center; gap:11px; font-weight:800; font-size:1.1rem; letter-spacing:-.02em}
+.logo{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, var(--primary), #60a5fa); display:grid; place-items:center; color:#fff; box-shadow:0 4px 12px rgba(59, 130, 246, 0.3)}
+
+/* Buttons (No hover transforms) */
+.nav-actions{display:flex; align-items:center; gap:12px}
+.iconbtn, .ghost, .primary, .danger{border:0; border-radius:12px; padding:10px 16px; font-weight:600;}
+.primary{background:var(--primary); color:#fff; box-shadow:0 4px 12px rgba(59, 130, 246, 0.2)}
+.primary:hover{background:var(--primary-hover)}
+.ghost{background:rgba(255,255,255,0.8); border:1px solid var(--line); color:var(--ink)}
+.ghost:hover{background:#f1f5f9}
+.danger{color:var(--bad); border:1px solid #fda4af; background:#fff}
+.danger:hover{background:var(--badbg)}
+
+/* Still Cards & Layout */
+.hero{padding:50px 0 30px}
+.hero-grid{display:grid; grid-template-columns:1.2fr 0.8fr; gap:24px; align-items:stretch}
+.hero-card, .score-card, .panel, .stat{
+  background:rgba(255, 255, 255, 0.9);
+  backdrop-filter:blur(8px);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.hero-card{padding:40px}
+.eyebrow{font-size:13px; color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:0.1em}
+.hero h1{font-size:clamp(32px, 4vw, 56px); font-weight:800; line-height:1.1; letter-spacing:-.03em; margin:12px 0 20px}
+.hero p{font-size:17px; line-height:1.7; color:var(--muted); max-width:600px}
+.hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:30px}
+.mini-note{display:flex; gap:8px; align-items:flex-start; color:var(--muted); font-size:13px; margin-top:24px}
+
+/* Score Card */
+.score-card{padding:32px; display:flex; flex-direction:column; justify-content:space-between; min-height:330px; background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95))}
+.score-head{display:flex; justify-content:space-between; align-items:center}
+.score-ring{width:190px; height:190px; margin:24px auto 15px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--primary) calc(var(--p)*1%), #e2e8f0 0); position:relative}
+.score-ring:after{content:""; position:absolute; width:154px; height:154px; border-radius:50%; background:#fff}
+.score-inner{position:relative; z-index:1; text-align:center}
+.score-num{font-size:56px; font-weight:800; line-height:1; color:var(--ink)}
+.score-den{color:var(--muted); font-size:14px; font-weight:500; margin-top:4px}
+.score-label{text-align:center; font-weight:700; color:var(--ink)}
+.status{display:inline-flex; padding:6px 12px; border-radius:999px; font-size:13px; font-weight:700}
+.status.good{background:var(--goodbg); color:var(--good)}
+.status.warn{background:var(--warnbg); color:var(--warn)}
+.status.bad{background:var(--badbg); color:var(--bad)}
+
+/* Sections */
+.section{padding:24px 0 60px}
+.section-head{display:flex; justify-content:space-between; gap:20px; align-items:flex-end; margin:0 0 20px}
+.section h2{margin:0; font-size:24px; font-weight:800; letter-spacing:-.02em}
+.section-sub{color:var(--muted); margin:8px 0 0; font-size:15px}
+.dashboard{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+.stat{padding:24px}
+.stat .k{font-size:13px; font-weight:600; color:var(--muted)}
+.stat .v{font-weight:800; font-size:28px; margin-top:8px; color:var(--ink)}
+.stat .s{font-size:13px; color:var(--muted); margin-top:4px}
+
+/* Tabs & Forms */
+.tabs{display:flex; gap:8px; overflow:auto; padding-bottom:8px; margin-bottom:20px}
+.tab{white-space:nowrap; border:1px solid var(--line); background:#fff; color:var(--muted); padding:10px 16px; border-radius:999px; font-weight:600}
+.tab.active{background:var(--soft); border-color:var(--primary); color:var(--primary)}
+.panel{padding:32px}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:24px}
+.grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:20px}
+.stack{display:grid; gap:16px}
+.field{display:grid; gap:8px}
+.field label{font-size:14px; font-weight:600; color:var(--ink)}
+input, select, textarea{width:100%; border:1px solid var(--line); background:#f8fafc; border-radius:12px; padding:12px 16px; outline:none; color:var(--ink); transition:border-color 0.3s, box-shadow 0.3s}
+input:focus, select:focus{border-color:var(--primary); box-shadow:0 0 0 4px rgba(59,130,246,.15); background:#fff}
+.range-line{display:flex; gap:16px; align-items:center}
+.range-value{min-width:48px; text-align:right; font-weight:700; color:var(--primary)}
+
+/* Callouts & Results */
+.callout{border-radius:16px; padding:16px 20px; border:1px solid var(--line); background:#f8fafc}
+.callout strong{display:block; margin-bottom:6px; color:var(--ink)}
+.callout p{margin:0; color:var(--muted); font-size:14px; line-height:1.6}
+.callout.good{background:var(--goodbg); border-color:#a7f3d0}
+.callout.warn{background:var(--warnbg); border-color:#fde68a}
+.callout.bad{background:var(--badbg); border-color:#fecdd3}
+
+.check{display:flex; align-items:flex-start; gap:12px; padding:16px; border:1px solid var(--line); border-radius:12px; background:#f8fafc; cursor:pointer}
+.check:hover{background:#f1f5f9}
+.check input{width:18px; height:18px; margin-top:2px; accent-color:var(--primary)}
+.check span{font-size:14px; line-height:1.5}
+
+.result-hero{display:grid; grid-template-columns:200px 1fr; gap:32px; align-items:center}
+.meter{height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:16px}
+.meter>div{height:100%; border-radius:999px; background:linear-gradient(90deg, #60a5fa, var(--primary)); width:0; transition:width 1.5s cubic-bezier(0.16, 1, 0.3, 1)}
+.results{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:24px}
+.result-box{padding:20px; border:1px solid var(--line); border-radius:16px; background:#f8fafc}
+.result-box b{display:block; font-size:14px; margin-bottom:8px; color:var(--ink)}
+.result-box .big{font-size:26px; font-weight:800; color:var(--primary)}
+.result-box p{font-size:13px; color:var(--muted); margin:8px 0 0}
+
+.advice{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:24px}
+.advice-card{padding:20px; border-radius:16px; background:#fff; border:1px solid var(--line); box-shadow:0 4px 6px -1px rgba(0,0,0,0.02)}
+.advice-card .tag{font-size:12px; font-weight:700; color:var(--primary); margin-bottom:10px; display:inline-block; padding:4px 10px; background:var(--soft); border-radius:6px}
+.advice-card h3{margin:0 0 8px; font-size:16px; font-weight:700}
+.advice-card p{margin:0; color:var(--muted); font-size:14px; line-height:1.6}
+
+/* Diary Table & Charts */
+.diary-row{display:grid; grid-template-columns:1.2fr repeat(5,1fr) 40px; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid var(--line)}
+.diary-row:last-child{border-bottom:0}
+.diary-head{font-size:13px; color:var(--muted); font-weight:600; padding-bottom:8px}
+.diary-row input, .diary-row select{padding:10px 12px; border-radius:10px; font-size:14px; font-weight:500}
+.table-scroll{overflow-x:auto}
+.empty{text-align:center; padding:48px 20px; color:var(--muted); background:#f8fafc; border-radius:12px; border:1px dashed #cbd5e1}
+
+.chart{height:240px; padding-top:16px; width:100%}
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin-top:12px; font-weight:500}
+.dot{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px}
+.insight-list{display:grid; gap:12px}
+.insight{display:flex; gap:12px; align-items:flex-start; padding:16px; border:1px solid var(--line); border-radius:14px; background:#fff}
+.insight .num{width:28px; height:28px; border-radius:50%; background:var(--soft); display:grid; place-items:center; font-weight:700; color:var(--primary); flex:none; font-size:14px}
+.insight p{margin:0; font-size:14px; line-height:1.6; color:var(--ink)}
+
+/* Footer & Modal */
+footer{padding:40px 0 80px; color:var(--muted); font-size:13px; line-height:1.6}
+.sources a{color:var(--primary); text-decoration:none; font-weight:500}
+.sources a:hover{text-decoration:underline}
+.modal{position:fixed; inset:0; background:rgba(15, 23, 42, 0.6); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; padding:20px; z-index:50}
+.modal.open{display:flex}
+.modal-card{max-width:600px; width:100%; max-height:90vh; overflow:auto; background:#fff; border-radius:24px; padding:32px; box-shadow:0 25px 50px -12px rgba(0, 0, 0, 0.25)}
+
+/* Toast (Slowed transition) */
+.toast{position:fixed; bottom:30px; right:30px; background:var(--ink); color:#fff; padding:14px 24px; border-radius:12px; font-weight:500; font-size:14px; box-shadow:0 10px 25px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.5s cubic-bezier(0.16, 1, 0.3, 1); z-index:100}
+.toast.show{transform:translateY(0); opacity:1}
+
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr}
+  .dashboard{grid-template-columns:repeat(2,1fr)}
+  .grid3{grid-template-columns:1fr}
+  .result-hero{grid-template-columns:1fr}
+  .advice{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .wrap{padding:0 16px}
+  .hero-card, .score-card, .panel{padding:24px}
+  .dashboard{grid-template-columns:1fr 1fr}
+  .grid2{grid-template-columns:1fr}
+  .nav{height:64px}
+  .nav-actions .ghost span{display:none}
+  .diary-row{grid-template-columns:110px repeat(5,90px) 40px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="toast" class="toast">บันทึกแล้ว ✦</div>
+
+<div class="topbar">
+  <div class="wrap nav">
+    <div class="brand"><div class="logo">☾</div><div>SleepSense</div></div>
+    <div class="nav-actions">
+      <button class="ghost" id="infoBtn">ⓘ <span>เกี่ยวกับโปรแกรม</span></button>
+      <button class="primary" id="quickDiaryBtn">+ บันทึกวันนี้</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+<section class="hero">
+ <div class="hero-grid">
+  <div class="hero-card">
+   <div class="eyebrow">Sleep health dashboard</div>
+   <h1>รู้จักการนอนของคุณ<br>แล้วค่อย ๆ ทำให้ดีขึ้น</h1>
+   <p>โปรแกรมประเมินสุขภาพการนอนจากพฤติกรรมและ sleep diary เพื่อช่วยมองเห็น “ระยะเวลา • คุณภาพ • ความสม่ำเสมอ • ผลกระทบตอนกลางวัน” พร้อมแผนปรับพฤติกรรมที่ทำได้จริง</p>
+   <div class="hero-cta">
+     <button class="primary" id="startBtn">เริ่มประเมินการนอน</button>
+     <button class="ghost" id="scrollDiary">ดู Sleep Diary</button>
+   </div>
+   <div class="mini-note">🔒 ข้อมูลเก็บในเบราว์เซอร์ของเครื่องนี้ และไม่มีระบบส่งข้อมูลขึ้นเซิร์ฟเวอร์</div>
+  </div>
+  <div class="score-card">
+   <div class="score-head">
+     <div>
+       <div class="eyebrow">Wellness score</div>
+       <div style="color:var(--muted);font-size:13px;margin-top:4px">ปรับตามข้อมูลล่าสุด</div>
+     </div>
+     <span class="status warn" id="scoreStatus">ยังไม่มีข้อมูล</span>
+   </div>
+   <div class="score-ring" id="scoreRing" style="--p:0">
+     <div class="score-inner">
+       <div class="score-num" id="scoreNum">—</div>
+       <div class="score-den">/ 100</div>
+     </div>
+   </div>
+   <div class="score-label" id="scoreLabel">ทำแบบประเมินเพื่อดูคะแนน</div>
+  </div>
+ </div>
+</section>
+
+<section class="section" id="dashboard">
+ <div class="section-head">
+   <div><h2>ภาพรวม</h2><p class="section-sub">ตัวชี้วัดที่สำคัญจากข้อมูลของคุณ</p></div>
+ </div>
+ <div class="dashboard">
+  <div class="stat"><div class="k">เวลานอนเฉลี่ย</div><div class="v" id="avgSleep">—</div><div class="s">ชั่วโมง/คืน</div></div>
+  <div class="stat"><div class="k">Sleep efficiency</div><div class="v" id="efficiency">—</div><div class="s">เวลาหลับ ÷ เวลาบนเตียง</div></div>
+  <div class="stat"><div class="k">ความสม่ำเสมอ</div><div class="v" id="regularity">—</div><div class="s">ความแกว่งของเวลาตื่น</div></div>
+  <div class="stat"><div class="k">บันทึกแล้ว</div><div class="v" id="daysLogged">0</div><div class="s">จาก 7 วันล่าสุด</div></div>
+ </div>
+</section>
+
+<section class="section" id="assessment">
+ <div class="section-head">
+   <div><h2>1. ประเมินสุขภาพการนอน</h2><p class="section-sub">ตอบตาม “ช่วง 2 สัปดาห์ที่ผ่านมา” เพื่อให้คะแนนสะท้อนภาพรวมมากขึ้น</p></div>
+ </div>
+ <div class="panel">
+  <div class="tabs">
+    <button class="tab active" data-tab="basic">พื้นฐาน</button>
+    <button class="tab" data-tab="quality">คุณภาพ</button>
+    <button class="tab" data-tab="habits">พฤติกรรม</button>
+    <button class="tab" data-tab="redflags">สัญญาณเตือน</button>
+  </div>
+  
+  <div id="tab-basic" class="tabbody">
+   <div class="grid2">
+    <div class="field"><label>อายุ</label><input id="age" type="number" min="5" max="100" placeholder="เช่น 25"></div>
+    <div class="field"><label>เวลาที่ต้องตื่นโดยทั่วไป</label><input id="wakeTarget" type="time" value="06:00"></div>
+    <div class="field"><label>เวลาเข้านอนโดยทั่วไป</label><input id="bedTarget" type="time" value="22:30"></div>
+    <div class="field"><label>งีบตอนกลางวันโดยเฉลี่ย</label><select id="nap"><option value="0">แทบไม่มี</option><option value="1">น้อยกว่า 30 นาที</option><option value="2">30–60 นาที</option><option value="3">มากกว่า 60 นาที</option></select></div>
+   </div>
+   <div class="callout" style="margin-top:24px"><strong>เกณฑ์เวลาเป้าหมายจะปรับตามอายุ</strong><p>วัยรุ่น 13–17 ปี: แนะนำ 8–10 ชั่วโมง | ผู้ใหญ่ 18–60 ปี: อย่างน้อย 7 ชั่วโมงเป็นประจำ</p></div>
+  </div>
+
+  <div id="tab-quality" class="tabbody" style="display:none">
+   <div class="stack">
+    <div class="field"><label>ใช้เวลานานแค่ไหนกว่าจะหลับ?</label><select id="latency"><option value="0">น้อยกว่า 15 นาที</option><option value="1">15–30 นาที</option><option value="2">31–60 นาที</option><option value="3">มากกว่า 60 นาที</option></select></div>
+    <div class="field"><label>ตื่นกลางคืนบ่อยแค่ไหน?</label><select id="awaken"><option value="0">แทบไม่ตื่น</option><option value="1">บางคืน</option><option value="2">หลายคืนต่อสัปดาห์</option><option value="3">เกือบทุกคืน</option></select></div>
+    <div class="field"><label>ตื่นแล้วรู้สึกสดชื่นเพียงใด?</label><div class="range-line"><input id="refresh" type="range" min="0" max="10" value="6"><div class="range-value" id="refreshVal">6/10</div></div></div>
+    <div class="field"><label>ง่วงระหว่างวันเพียงใด?</label><div class="range-line"><input id="daySleepy" type="range" min="0" max="10" value="4"><div class="range-value" id="daySleepyVal">4/10</div></div></div>
+    <div class="field"><label>คุณภาพการนอนโดยรวม</label><select id="quality"><option value="3">แย่มาก</option><option value="2">ค่อนข้างแย่</option><option value="1">พอใช้</option><option value="0">ดี</option></select></div>
+   </div>
+  </div>
+
+  <div id="tab-habits" class="tabbody" style="display:none">
+   <div class="grid2">
+    <div class="field"><label>คาเฟอีนช่วงบ่าย/เย็น</label><select id="caffeine"><option value="0">แทบไม่ดื่ม</option><option value="1">บางวัน</option><option value="2">เกือบทุกวัน</option><option value="3">ทุกวัน/หลายครั้ง</option></select></div>
+    <div class="field"><label>หน้าจอก่อนนอน</label><select id="screen"><option value="0">หยุดก่อนนอน ≥ 60 นาที</option><option value="1">30–60 นาที</option><option value="2">15–30 นาที</option><option value="3">แทบจนถึงเวลาหลับ</option></select></div>
+    <div class="field"><label>เวลาตื่นแกว่ง (วันธรรมดา vs วันหยุด)</label><select id="schedule"><option value="0">น้อยกว่า 30 นาที</option><option value="1">30–60 นาที</option><option value="2">1–2 ชั่วโมง</option><option value="3">มากกว่า 2 ชั่วโมง</option></select></div>
+    <div class="field"><label>กิจกรรมทางกาย</label><select id="exercise"><option value="0">สม่ำเสมอ</option><option value="1">ค่อนข้างสม่ำเสมอ</option><option value="2">น้อย</option><option value="3">แทบไม่มี</option></select></div>
+    <div class="field"><label>สภาพห้องนอน</label><select id="environment"><option value="0">มืด เงียบ สบาย</option><option value="1">รบกวนเล็กน้อย</option><option value="2">รบกวนพอสมควร</option><option value="3">รบกวนมาก</option></select></div>
+    <div class="field"><label>ความเครียดก่อนนอน</label><select id="stress"><option value="0">น้อย</option><option value="1">เล็กน้อย</option><option value="2">ปานกลาง</option><option value="3">มาก</option></select></div>
+   </div>
+  </div>
+
+  <div id="tab-redflags" class="tabbody" style="display:none">
+   <div class="stack">
+    <label class="check"><input id="snore" type="checkbox"><span><b>กรนดังบ่อย</b><br>โดยเฉพาะถ้ามีคนรอบตัวสังเกตเห็น</span></label>
+    <label class="check"><input id="gasp" type="checkbox"><span><b>สะดุ้งหอบ/เหมือนขาดอากาศขณะหลับ</b><br>หรือมีคนบอกว่าหยุดหายใจเป็นช่วง ๆ</span></label>
+    <label class="check"><input id="dangerSleepy" type="checkbox"><span><b>ง่วงมากจนรบกวนการใช้ชีวิต</b><br>เช่น เผลอหลับระหว่างทำงานหรือขับรถ</span></label>
+    <label class="check"><input id="persistent" type="checkbox"><span><b>ปัญหาการนอนต่อเนื่องและกระทบชีวิต</b><br>แนะนำให้ปรึกษาแพทย์แทนการแก้ด้วยตัวเอง</span></label>
+   </div>
+  </div>
+
+  <div style="display:flex; justify-content:flex-end; margin-top:32px">
+    <button class="primary" id="assessBtn">ประมวลผลการประเมิน</button>
+  </div>
+ </div>
+</section>
+
+<section class="section" id="results">
+ <div class="section-head">
+   <div><h2>2. ผลประเมินและแผนแก้ไข</h2><p class="section-sub">คำแนะนำปรับแต่งตามปัจจัยของคุณ</p></div>
+ </div>
+ <div class="panel">
+   <div class="result-hero">
+     <div>
+       <div class="score-ring" id="scoreRing2" style="--p:0; width:180px; height:180px">
+         <div class="score-inner">
+           <div class="score-num" id="scoreNum2">—</div>
+           <div class="score-den">/ 100</div>
+         </div>
+       </div>
+     </div>
+     <div>
+       <div id="resultHeadline" style="font-size:24px; font-weight:800">ยังไม่มีผลประเมิน</div>
+       <p id="resultSummary" style="color:var(--muted); line-height:1.6; margin-top:8px">กรอกแบบประเมินด้านบน ระบบจะสรุปคะแนนและคำแนะนำ</p>
+       <div class="meter"><div id="meterBar"></div></div>
+     </div>
+   </div>
+
+   <div class="results">
+    <div class="result-box"><b>ระยะเวลา</b><div class="big" id="durationScore">—</div><p>ความเพียงพอเมื่อเทียบกับอายุ</p></div>
+    <div class="result-box"><b>คุณภาพ</b><div class="big" id="qualityScore">—</div><p>ความสดชื่นและการตื่นกลางคืน</p></div>
+    <div class="result-box"><b>พฤติกรรม</b><div class="big" id="habitScore">—</div><p>ตารางเวลา แสง คาเฟอีน และหน้าจอ</p></div>
+   </div>
+
+   <div class="advice" id="adviceList"></div>
+   <div id="riskBox" style="margin-top:24px"></div>
+ </div>
+</section>
+
+<section class="section" id="diary">
+ <div class="section-head">
+   <div><h2>3. Sleep Diary — ติดตาม 7 วัน</h2><p class="section-sub">การบันทึกช่วยให้เห็นรูปแบบจริง</p></div>
+   <button class="ghost" id="addDayBtn">+ เพิ่มคืน</button>
+ </div>
+ <div class="panel">
+   <div class="table-scroll">
+     <div class="diary-row diary-head">
+       <div>วันที่</div><div>เข้านอน</div><div>หลับจริง</div><div>ตื่น</div><div>เวลาตื่นสุดท้าย</div><div>คุณภาพ (0-10)</div><div></div>
+     </div>
+     <div id="diaryRows"></div>
+   </div>
+   <div class="grid2" style="margin-top:32px">
+    <div>
+      <div class="section-head" style="margin-bottom:16px">
+        <div><b>แนวโน้ม 7 วัน</b></div>
+      </div>
+      <canvas id="sleepChart" class="chart" width="700" height="240"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--primary)"></i>ชั่วโมงนอน</span>
+        <span><i class="dot" style="background:#94a3b8"></i>คุณภาพ</span>
+      </div>
+    </div>
+    <div>
+      <div class="section-head" style="margin-bottom:16px">
+        <div><b>สิ่งที่ควรจับตา</b></div>
+      </div>
+      <div class="insight-list" id="insights"></div>
+    </div>
+   </div>
+ </div>
+</section>
+
+<section class="section" id="plan">
+ <div class="section-head">
+   <div><h2>4. แผน 7 วัน</h2><p class="section-sub">เลือกทำทีละ 2–3 อย่างก่อน เพื่อให้เกิดพฤติกรรมที่ทำต่อได้</p></div>
+ </div>
+ <div class="grid3" id="planCards"></div>
+</section>
+
+<footer>
+  <div style="font-weight:700; color:var(--ink); margin-bottom:12px">แหล่งข้อมูลอ้างอิงทางการแพทย์</div>
+  <div>เกณฑ์ระยะเวลานอน: <a href="https://www.cdc.gov/sleep/about/index.html" target="_blank">CDC</a> • <a href="https://aasm.org" target="_blank">AASM</a></div>
+  <div>สุขอนามัยการนอน: <a href="https://www.nhlbi.nih.gov/health/insomnia/treatment" target="_blank">NHLBI</a></div>
+  <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line)">หมายเหตุ: เครื่องมือนี้มีไว้เพื่อติดตามตนเอง ไม่ใช่เครื่องมือวินิจฉัยโรคทางการแพทย์</div>
+</footer>
+</main>
+
+<div class="modal" id="infoModal">
+  <div class="modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+      <h3 style="margin:0; font-size:20px; font-weight:800">เกี่ยวกับ SleepSense</h3>
+      <button class="ghost" id="closeInfo" style="padding:6px 12px">ปิด</button>
+    </div>
+    <p style="line-height:1.7; color:var(--muted)">SleepSense เป็นโปรแกรมประเมินสุขภาพการนอนเบื้องต้น คะแนนอ้างอิงจากระยะเวลา คุณภาพ และพฤติกรรม ไม่ใช่การวินิจฉัยทางการแพทย์</p>
+    <div class="callout warn" style="margin:20px 0">
+      <strong>เมื่อใดควรพบแพทย์?</strong>
+      <p>หากคุณมีอาการกรนดัง สะดุ้งตื่นเหมือนขาดอากาศ หรือมีปัญหาการนอนเรื้อรังที่กระทบต่อชีวิตประจำวัน ควรปรึกษาแพทย์เฉพาะทาง</p>
+    </div>
+    <div style="display:flex; justify-content:flex-end; margin-top:24px">
+      <button class="danger" id="resetBtn">ลบข้อมูลทั้งหมดในเครื่อง</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Web Audio API Sound Generator
+let audioCtx = null;
+function playSound(type = 'click') {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    
+    const now = audioCtx.currentTime;
+    if (type === 'click') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(400, now);
+      osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    } else if (type === 'success') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.setValueAtTime(659.25, now + 0.08);
+      osc.frequency.setValueAtTime(783.99, now + 0.16);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    }
+  } catch (e) {}
+}
+
+// Active Moving Starfield Background Canvas
+(function initMovingBackground() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let stars = [];
+  let mouseX = 0, mouseY = 0;
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    stars = [];
+    const count = Math.floor((width * height) / 8000); // Full star density
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * width - width / 2,
+        y: Math.random() * height - height / 2,
+        z: Math.random() * 1000,
+        r: Math.random() * 2 + 0.5
+      });
+    }
+  }
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX - width / 2) * 0.02;
+    mouseY = (e.clientY - height / 2) * 0.02;
+  });
+
+  resize();
+
+  function render() {
+    ctx.clearRect(0, 0, width, height);
+    const cx = width / 2;
+    const cy = height / 2;
+
+    stars.forEach(star => {
+      star.z -= 0.5; // Active background particle speed
+      if (star.z <= 0) star.z = 1000;
+
+      const k = 252 / star.z;
+      const px = (star.x + mouseX) * k + cx;
+      const py = (star.y + mouseY) * k + cy;
+
+      if (px >= 0 && px <= width && py >= 0 && py <= height) {
+        const size = (1 - star.z / 1000) * star.r;
+        const alpha = (1 - star.z / 1000) * 0.4;
+        ctx.fillStyle = `rgba(59, 130, 246, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(px, py, Math.max(0, size), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    requestAnimationFrame(render);
+  }
+  render();
+})();
+
+// App Logic
+const KEY='sleepsense.v1';
+const el=id=>document.getElementById(id);
+const qs=s=>document.querySelector(s), qsa=s=>[...document.querySelectorAll(s)];
+const state=JSON.parse(localStorage.getItem(KEY)||'null')||{assessment:{},diary:[],plan:{}};
+
+function save(){localStorage.setItem(KEY,JSON.stringify(state));renderAll()}
+function val(id){return el(id).value}
+function bool(id){return el(id).checked}
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+function parseTime(s){if(!s)return 0;const [h,m]=s.split(':').map(Number);return h*60+m}
+function diffMin(a,b){let d=parseTime(b)-parseTime(a); if(d<=0)d+=1440; return d}
+function ageTarget(age){
+  if(age>=13&&age<=17)return [8,10]; if(age>=18&&age<=60)return [7,9]; 
+  if(age>=61&&age<=64)return [7,9]; if(age>=65)return [7,8]; 
+  if(age>=6&&age<=12)return [9,12]; if(age>=3&&age<=5)return [10,13]; 
+  return [0,24]
+}
+
+function durationScore(age, hours){
+  const [lo,hi]=ageTarget(age);
+  if(!lo)return 70;
+  if(hours<lo)return clamp(100-Math.round((lo-hours)*28),0,100);
+  if(hours>hi)return clamp(100-Math.round((hours-hi)*10),65,100);
+  return 100;
+}
+
+function calcAssessment(){
+ const age=Number(val('age'))||0;
+ const targetWake=val('wakeTarget'), targetBed=val('bedTarget');
+ const planned=diffMin(targetBed,targetWake)/60;
+ const quality=clamp(100-(Number(val('latency'))*14+Number(val('awaken'))*14+(10-Number(val('refresh')))*4+Number(val('daySleepy'))*3+Number(val('quality'))*10),0,100);
+ const habits=clamp(100-(Number(val('caffeine'))*9+Number(val('screen'))*8+Number(val('schedule'))*9+Number(val('exercise'))*6+Number(val('environment'))*6+Number(val('stress'))*7+Number(val('nap'))*4),0,100);
+ const dur=durationScore(age,planned);
+ let score=Math.round(dur*.36+quality*.34+habits*.30);
+ const flags={snore:bool('snore'),gasp:bool('gasp'),dangerSleepy:bool('dangerSleepy'),persistent:bool('persistent')};
+ state.assessment={age,targetWake,targetBed,planned,latency:Number(val('latency')),awaken:Number(val('awaken')),refresh:Number(val('refresh')),daySleepy:Number(val('daySleepy')),qualityRaw:Number(val('quality')),caffeine:Number(val('caffeine')),screen:Number(val('screen')),schedule:Number(val('schedule')),exercise:Number(val('exercise')),environment:Number(val('environment')),stress:Number(val('stress')),nap:Number(val('nap')),flags,score,dur,quality,habits,ts:new Date().toISOString()};
+ save(); return state.assessment;
+}
+
+function setAssessment(a){
+ if(!a)return;
+ const map=['age','wakeTarget','bedTarget','latency','awaken','refresh','daySleepy','quality','caffeine','screen','schedule','exercise','environment','stress','nap'];
+ map.forEach(id=>{if(a[id]!==undefined)el(id).value=a[id]});
+ ['snore','gasp','dangerSleepy','persistent'].forEach(id=>el(id).checked=!!a.flags?.[id]);
+ qsa('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab==='basic'));
+ qsa('.tabbody').forEach(x=>x.style.display=x.id==='tab-basic'?'block':'none');
+ el('refreshVal').textContent=a.refresh+'/10'; el('daySleepyVal').textContent=a.daySleepy+'/10';
+}
+
+function statusFor(s){if(s>=80)return ['ดี','good'];if(s>=60)return ['ควรปรับปรุง','warn'];return ['ต้องดูแลพิเศษ','bad']}
+
+function adviceFrom(a){
+ const list=[];
+ const [lo,hi]=ageTarget(a.age);
+ if(a.age&&a.planned<lo)list.push(['เวลา','เพิ่มเวลานอน',`เวลาเป้าหมาย ${a.planned.toFixed(1)} ชม. ต่ำกว่าเกณฑ์ (${lo}–${hi} ชม.)`]);
+ if(a.latency>=2)list.push(['ก่อนนอน','ผ่อนคลาย 30 นาที','ลดกิจกรรมกระตุ้น อ่านหนังสือ หรือฟังเพลงเบาๆ']);
+ if(a.awaken>=2)list.push(['สภาพแวดล้อม','คุมความมืดและเสียง','ปรับห้องให้มืด เงียบ และเย็นสบาย']);
+ if(a.screen>=2)list.push(['แสงหน้าจอ','ลดมือถือก่อนนอน','แสงสีฟ้ากดทับเมลาโทนิน ควรลดการใช้ 30 นาทีก่อนนอน']);
+ if(a.caffeine>=2)list.push(['คาเฟอีน','งดกาแฟช่วงบ่าย','เลี่ยงเครื่องดื่มชูกำลังหรือชาหลังบ่ายโมง']);
+ if(a.schedule>=2)list.push(['ความสม่ำเสมอ','ตื่นเวลาเดิม','ให้วันหยุดต่างจากวันปกติไม่เกิน 1 ชั่วโมง']);
+ if(!list.length)list.push(['ดีมาก','รักษากิจวัตรที่ดี','คุณมีพื้นฐานการนอนที่ดีแล้ว ติดตามด้วย Diary ต่อไป']);
+ return list.slice(0,6);
+}
+
+function renderAssessment(a){
+ const s=statusFor(a.score);
+ el('scoreNum').textContent=a.score; el('scoreNum2').textContent=a.score;
+ el('scoreRing').style.setProperty('--p',a.score); el('scoreRing2').style.setProperty('--p',a.score);
+ el('scoreStatus').textContent=s[0]; el('scoreStatus').className='status '+s[1];
+ el('scoreLabel').textContent=a.score>=80?'ยอดเยี่ยม':a.score>=60?'ทำได้ดี แต่ปรับปรุงได้อีก':'ควรให้ความสำคัญกับการนอน';
+ el('meterBar').style.width=a.score+'%';
+ el('durationScore').textContent=Math.round(a.dur)+'/100';
+ el('qualityScore').textContent=Math.round(a.quality)+'/100';
+ el('habitScore').textContent=Math.round(a.habits)+'/100';
+ el('resultHeadline').textContent=a.score>=80?'การนอนอยู่ในเกณฑ์ดีเยี่ยม':a.score>=60?'มีบางจุดที่ปรับแก้ได้':'ควรเริ่มปรับพื้นฐานด่วน';
+ el('adviceList').innerHTML=adviceFrom(a).map(x=>`<div class="advice-card"><span class="tag">${x[0]}</span><h3>${x[1]}</h3><p>${x[2]}</p></div>`).join('');
+ 
+ const flags=a.flags||{}; let risk='';
+ if((flags.gasp||flags.snore)&&flags.dangerSleepy) risk='<div class="callout bad"><strong>แนะนำให้พบแพทย์</strong><p>คุณมีสัญญาณหยุดหายใจขณะหลับร่วมกับความง่วงรุนแรง ควรรับการตรวจ Sleep Test</p></div>';
+ else if(flags.gasp||flags.snore) risk='<div class="callout warn"><strong>สัญญาณการกรน / หยุดหายใจ</strong><p>ควรสังเกตอาการ หากกระทบการใช้ชีวิตควรปรึกษาแพทย์</p></div>';
+ else risk='<div class="callout good"><strong>ไม่พบความเสี่ยงรุนแรง</strong><p>รักษาพฤติกรรมที่ดีไว้และติดตามต่อเนื่อง</p></div>';
+ el('riskBox').innerHTML=risk;
+}
+
+function addDiaryRow(d){
+  state.diary.push(d||{date:new Date().toISOString().slice(0,10), bed:'22:30', sleep:'23:00', wake:'06:30', last:'06:30', quality:6});
+  state.diary=state.diary.slice(-7); save();
+}
+
+function renderDiary(){
+ el('daysLogged').textContent=state.diary.length; el('diaryRows').innerHTML='';
+ if(!state.diary.length){
+   el('diaryRows').innerHTML='<div class="empty">ยังไม่มีบันทึก กด “เพิ่มคืน” เพื่อเริ่มจด Diary</div>';
+   drawChart(); renderInsights(); return;
+ }
+ state.diary.forEach((d,i)=>{
+   const row=document.createElement('div'); row.className='diary-row';
+   row.innerHTML=`<div><input type="date" value="${d.date||''}" data-k="date" data-i="${i}"></div><div><input type="time" value="${d.bed||''}" data-k="bed" data-i="${i}"></div><div><input type="time" value="${d.sleep||''}" data-k="sleep" data-i="${i}"></div><div><input type="time" value="${d.wake||''}" data-k="wake" data-i="${i}"></div><div><input type="time" value="${d.last||''}" data-k="last" data-i="${i}"></div><div><input type="number" min="0" max="10" value="${d.quality??6}" data-k="quality" data-i="${i}"></div><div><button class="ghost" data-del="${i}" style="padding:8px">×</button></div>`;
+   el('diaryRows').appendChild(row);
+ });
+ qsa('#diaryRows input').forEach(x=>x.addEventListener('change',()=>{state.diary[Number(x.dataset.i)][x.dataset.k]=x.type==='number'?Number(x.value):x.value; save()}));
+ qsa('[data-del]').forEach(b=>b.addEventListener('click',()=>{
+   playSound('click');
+   state.diary.splice(Number(b.dataset.del),1); save();
+ })); 
+ drawChart(); renderInsights();
+}
+
+function diaryStats(){
+ if(!state.diary.length)return null;
+ const hours=state.diary.map(d=>diffMin(d.sleep,d.wake)/60).filter(Number.isFinite);
+ const bedmins=state.diary.map(d=>diffMin(d.bed,d.wake));
+ const eff=hours.length?hours.reduce((a,b)=>a+b,0)/hours.length:0;
+ const efficiency=hours.length?Math.round(hours.reduce((a,h,i)=>a+(h/(bedmins[i]/60))*100,0)/hours.length):0;
+ const wake=state.diary.map(d=>parseTime(d.wake));
+ const mean=wake.reduce((a,b)=>a+b,0)/wake.length;
+ const sd=Math.sqrt(wake.reduce((a,x)=>a+(x-mean)**2,0)/wake.length);
+ return {avg:eff, efficiency, sd, wakeCount:wake.length, qualities:state.diary.map(d=>Number(d.quality)||0)}
+}
+
+function renderOverview(){
+  const st=diaryStats();
+  if(!st){el('avgSleep').textContent='—'; el('efficiency').textContent='—'; el('regularity').textContent='—'; return}
+  el('avgSleep').textContent=st.avg.toFixed(1); el('efficiency').textContent=st.efficiency+'%'; el('regularity').textContent=clamp(100-Math.round(st.sd/60*50),0,100)+'%';
+}
+
+function drawChart(){
+ const c=el('sleepChart'), ctx=c.getContext('2d'), w=c.width, h=c.height;
+ ctx.clearRect(0,0,w,h); ctx.font='12px Inter'; ctx.fillStyle='#94a3b8';
+ if(!state.diary.length){ctx.fillText('เพิ่มข้อมูลเพื่อดูกราฟ',18,30); return}
+ const pad={l:35,r:15,t:18,b:25}, iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+ 
+ for(let i=0;i<=5;i++){
+   const y=pad.t+ih*i/5; ctx.strokeStyle='#f1f5f9'; ctx.beginPath();
+   ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke();
+   ctx.fillStyle='#64748b'; ctx.fillText(String(10-i*2),5,y+4);
+ }
+ 
+ const pts1=state.diary.map((d,i)=>{const v=diffMin(d.sleep,d.wake)/60; return [pad.l+(i/(Math.max(1,state.diary.length-1)))*iw,pad.t+ih*(1-clamp(v/12,0,1))]});
+ const pts2=state.diary.map((d,i)=>{const v=Number(d.quality)||0; return [pad.l+(i/(Math.max(1,state.diary.length-1)))*iw,pad.t+ih*(1-v/10)]});
+ 
+ [[pts1,'#3b82f6'],[pts2,'#cbd5e1']].forEach(([pts,color])=>{
+   ctx.strokeStyle=color; ctx.lineWidth=3; ctx.beginPath();
+   pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p)); ctx.stroke();
+   pts.forEach(p=>{ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p[0],p[1],5,0,Math.PI*2); ctx.fill()})
+ });
+}
+
+function renderInsights(){
+ const box=el('insights');
+ if(!state.diary.length){box.innerHTML='<div class="insight"><div class="num">1</div><p>เมื่อมีข้อมูล 3–7 คืน ระบบจะวิเคราะห์รูปแบบการนอนให้</p></div>'; return}
+ const st=diaryStats(), arr=[];
+ if(st.avg<7)arr.push('เวลานอนเฉลี่ยต่ำกว่าเกณฑ์มาตรฐานผู้ใหญ่');
+ if(st.efficiency<85)arr.push('ใช้เวลาพลิกตัวบนเตียงนานเกินไป');
+ if(st.sd>45)arr.push('เวลาตื่นค่อนข้างแกว่ง ส่งผลเสียต่อนาฬิกาชีวิต');
+ if(!arr.length)arr.push('ข้อมูลอยู่ในเกณฑ์เสถียร ติดตามต่อไป');
+ box.innerHTML=arr.slice(0,3).map((x,i)=>`<div class="insight"><div class="num">${i+1}</div><p>${x}</p></div>`).join('');
+}
+
+function renderPlan(){
+ const cards=[
+   ['เป้าหมาย 1','คุมเวลาตื่น','ตื่นเวลาเดิมทุกวัน รวมถึงวันหยุด'],
+   ['เป้าหมาย 2','งดจอ 30 นาที','อ่านหนังสือแทนการไถฟีด'],
+   ['เป้าหมาย 3','รับแสงเช้า','เปิดม่านรับแสงแดดทันทีที่ตื่น']
+ ];
+ el('planCards').innerHTML=cards.map(c=>`<div class="panel"><div class="eyebrow">${c[0]}</div><h3 style="margin:8px 0">${c[1]}</h3><p style="margin:0;color:var(--muted);font-size:14px">${c[2]}</p></div>`).join('');
+}
+
+function renderAll(){
+ const a=state.assessment; if(a){setAssessment(a); renderAssessment(a)}
+ renderDiary(); renderOverview(); renderPlan();
+}
+
+// Event Listeners with Sound Effects
+qsa('button').forEach(btn => {
+  btn.addEventListener('click', () => playSound('click'));
+});
+
+qsa('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
+ playSound('click');
+ qsa('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));
+ qsa('.tabbody').forEach(x=>x.style.display=x.id==='tab-'+b.dataset.tab?'block':'none');
+}));
+
+['refresh','daySleepy'].forEach(id=>el(id).addEventListener('input',()=>el(id+'Val').textContent=el(id).value+'/10'));
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(window.__toast);
+  window.__toast=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+el('assessBtn').addEventListener('click',()=>{
+  calcAssessment(); 
+  el('results').scrollIntoView(); 
+  playSound('success');
+  showToast('วิเคราะห์เสร็จสิ้น ✦');
+});
+
+el('startBtn').addEventListener('click',()=>el('assessment').scrollIntoView());
+el('scrollDiary').addEventListener('click',()=>el('diary').scrollIntoView());
+el('quickDiaryBtn').addEventListener('click',()=>{
+  addDiaryRow(); 
+  el('diary').scrollIntoView(); 
+  playSound('success');
+  showToast('เพิ่มบันทึกวันนี้แล้ว');
+});
+
+el('addDayBtn').addEventListener('click',()=>{
+  const base=new Date(); base.setDate(base.getDate()-state.diary.length);
+  addDiaryRow({date:base.toISOString().slice(0,10), bed:'22:30', sleep:'23:00', wake:'06:30', last:'06:30', quality:6});
+  playSound('success');
+  showToast('เพิ่มคืนใหม่แล้ว');
+});
+
+el('infoBtn').addEventListener('click',()=>el('infoModal').classList.add('open'));
+el('closeInfo').addEventListener('click',()=>el('infoModal').classList.remove('open'));
+el('resetBtn').addEventListener('click',()=>{if(confirm('ต้องการลบข้อมูลทั้งหมด?')){localStorage.removeItem(KEY);location.reload()}});
+
+renderAll();
+</script>
+</body>
+</html>
